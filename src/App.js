@@ -1,84 +1,88 @@
-import React, { useMemo } from "react";
-import { DateTime, Info } from "luxon";
+import React, { useCallback, useRef, useState } from "react";
+import { Info } from "luxon";
+import useMonthSlots from "./useMonthSlots";
+import times from "./lib/times";
+import useToday from "./useToday";
 
-function useMonthDays(year, month) {
-  const firstDayOfMonth = useMemo(() => DateTime.local(year, month, 1), [
-    year,
-    month,
-  ]);
+function DaySlot({ day, toggleDaySlot, isOpen }) {
+  const today = useToday();
+  const dayRef = useRef();
 
-  const lastDayOfMonth = useMemo(
-    () => firstDayOfMonth.plus({ month: 1 }).minus({ day: 1 }),
-    [firstDayOfMonth]
-  );
-
-  const monthDays = useMemo(() => {
-    let days = [];
-    let lastDay = firstDayOfMonth;
-    while (!lastDay.equals(lastDayOfMonth)) {
-      days.push(lastDay);
-      lastDay = lastDay.plus({ day: 1 });
+  const handleClick = useCallback(() => {
+    if (day <= today) {
+      toggleDaySlot({
+        day,
+        x: dayRef.current.offsetLeft,
+        y: dayRef.current.offsetTop,
+      });
     }
-    days.push(lastDayOfMonth);
-    return days;
-  }, [firstDayOfMonth, lastDayOfMonth]);
+  }, [day, today, toggleDaySlot]);
 
-  return monthDays;
-}
+  let extraStyles = "text-current bg-transparent";
 
-function identity(x) {
-  return x;
-}
-
-function times(n, transform = identity) {
-  const array = [];
-  for (let i = 0; i < n; i++) {
-    array.push(transform(i));
+  if (today.equals(day)) {
+    extraStyles = "cursor-pointer text-white bg-green-500 hover:bg-green-600";
+  } else if (day > today) {
+    extraStyles = "text-gray-300 bg-transparent font-medium";
+  } else {
+    extraStyles = "cursor-pointer hover:bg-green-100";
   }
-  return array;
+
+  if (isOpen) {
+    extraStyles += " bg-green-600 hover:bg-green-600 text-white";
+  }
+
+  return (
+    <div
+      className={`rounded-full p-1 w-full h-full ${extraStyles}`}
+      onClick={handleClick}
+      ref={dayRef}
+    >
+      {day.day}
+    </div>
+  );
 }
 
-const WEEK_DAYS_COUNT = 7;
-const MAX_WEEKS_PER_MONTH = 5;
-
-function useFullMonthSlots(year, month) {
-  const monthDays = useMonthDays(year, month);
-
-  return useMemo(() => {
-    const allSlotsCount = WEEK_DAYS_COUNT * MAX_WEEKS_PER_MONTH;
-    const firstWeekday = monthDays[0].weekday;
-    const trailingEmptySlotsCount = firstWeekday - 1;
-    const leadingEmptySlotsCount =
-      allSlotsCount - (trailingEmptySlotsCount + monthDays.length);
-
-    const daySlots = monthDays.map((day) => {
-      return { day, isEmpty: false };
-    });
-
-    const createEmptySlot = () => ({ day: null, isEmpty: true });
-
-    return times(trailingEmptySlotsCount, createEmptySlot)
-      .concat(daySlots)
-      .concat(times(leadingEmptySlotsCount, createEmptySlot));
-  }, [monthDays]);
+function DayBubble({ day, openDayPosition: { x, y } }) {
+  return (
+    <div
+      className="absolute z-50 w-full h-96 bg-white border-2 border-gray-200 border-solid p-2"
+      style={{
+        top: y + 48,
+        left: 0,
+      }}
+    >
+      <h3>Day</h3>
+    </div>
+  );
 }
 
 function CalendarMonth({ year, month }) {
-  const slots = useFullMonthSlots(year, month);
+  const slots = useMonthSlots(year, month);
+  const monthName = Info.months()[month - 1];
+  const weekdays = Info.weekdays("short");
+
+  const [openDay, setOpenDay] = useState(null);
+  const [openDayPosition, setOpenDayPosition] = useState(null);
+
+  const toggleDaySlot = ({ day, x, y }) => {
+    if (openDay && openDay.equals(day)) {
+      setOpenDay(null);
+      setOpenDayPosition(null);
+    } else {
+      setOpenDayPosition({ x, y });
+      setOpenDay(day);
+    }
+  };
 
   return (
-    <div>
-      <h2>{Info.months()[month - 1]}</h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${WEEK_DAYS_COUNT}, 1fr)`,
-          width: "fit-content",
-        }}
-      >
-        {Info.weekdays("short").map((weekday) => {
+    <div className="p-8">
+      <h2 className="text-2xl">{monthName}</h2>
+      <div className="p-4" />
+      <div className="grid grid-cols-7 w-fit-content m-auto relative">
+        {weekdays.map((weekday) => {
           return (
-            <div style={{ padding: "1em", textTransform: "uppercase" }}>
+            <div key={weekday} className="p-4 uppercase font-bold">
               {weekday}
             </div>
           );
@@ -87,16 +91,23 @@ function CalendarMonth({ year, month }) {
           return (
             <div
               key={index}
-              style={{
-                padding: "0.5em",
-                alignSelf: "center",
-                justifySelf: "center",
-              }}
+              className="p-2 self-center justify-self-center w-12 h-12"
             >
-              {isEmpty ? "" : day.day}
+              {isEmpty ? (
+                ""
+              ) : (
+                <DaySlot
+                  day={day}
+                  toggleDaySlot={toggleDaySlot}
+                  isOpen={openDay && day.equals(openDay)}
+                />
+              )}
             </div>
           );
         })}
+        {openDay ? (
+          <DayBubble day={openDay} openDayPosition={openDayPosition} />
+        ) : null}
       </div>
     </div>
   );
@@ -104,13 +115,10 @@ function CalendarMonth({ year, month }) {
 
 function App() {
   return (
-    <div>
-      <h1>2021</h1>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
-        {times(12).map((month) => {
-          return <CalendarMonth key={month} year={2021} month={month + 1} />;
-        })}
-      </div>
+    <div className="text-center">
+      {times(12).map((month) => {
+        return <CalendarMonth key={month} year={2021} month={month + 1} />;
+      })}
     </div>
   );
 }
