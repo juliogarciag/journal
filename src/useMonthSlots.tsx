@@ -5,7 +5,7 @@ import times from "./lib/times";
 const WEEK_DAYS_COUNT = 7;
 const MAX_WEEKS_PER_MONTH = 5;
 
-function useMonthDays(year, month) {
+function useMonthDays(year: number, month: number) {
   const firstDayOfMonth = useMemo(() => DateTime.local(year, month, 1), [
     year,
     month,
@@ -30,11 +30,13 @@ function useMonthDays(year, month) {
   return monthDays;
 }
 
+type Slot = { day?: DateTime };
+
 function createEmptySlot() {
-  return { day: null, isEmpty: true };
+  return { day: undefined } as Slot;
 }
 
-function useMonthSlots(year, month) {
+function useMonthSlots(year: number, month: number): Array<Slot> {
   const monthDays = useMonthDays(year, month);
 
   return useMemo(() => {
@@ -45,12 +47,13 @@ function useMonthSlots(year, month) {
       allSlotsCount - (trailingSlotsCount + monthDays.length);
 
     const daySlots = monthDays.map((day) => {
-      return { day, isEmpty: false };
+      return { day } as Slot;
     });
 
-    return times(trailingSlotsCount, createEmptySlot)
+    return times(trailingSlotsCount)
+      .map(createEmptySlot)
       .concat(daySlots)
-      .concat(times(leadingSlotsCount, createEmptySlot));
+      .concat(times(leadingSlotsCount).map(createEmptySlot));
   }, [monthDays]);
 }
 
