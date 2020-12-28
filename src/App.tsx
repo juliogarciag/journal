@@ -1,32 +1,49 @@
-import React, { ReactNode, useCallback, useRef, useState } from "react";
+import React, {
+  ReactNode,
+  RefObject,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { DateTime, Info } from "luxon";
 import useMonthSlots from "./useMonthSlots";
 import times from "./lib/times";
 import useToday from "./useToday";
 import Button from "./atoms/Button";
+import useOnClickOutside from "./useOnClickOutside";
+import useGlobalKeyHandler from "./useGlobalKeyHandler";
 
 type DaySlotProps = {
   day: DateTime;
-  toggleDaySlot: (toggleOptions: {
+  openDaySlot: (toggleOptions: {
     day: DateTime;
-    x: number;
-    y: number;
+    daySlotElement: HTMLDivElement;
   }) => void;
+  closeDaySlot: () => void;
   isOpen: boolean;
 };
-function DaySlot({ day, toggleDaySlot, isOpen }: DaySlotProps) {
+function DaySlot({ day, openDaySlot, closeDaySlot, isOpen }: DaySlotProps) {
   const today = useToday();
   const daySlotRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = useCallback(() => {
-    if (day <= today && daySlotRef.current) {
-      toggleDaySlot({
-        day,
-        x: daySlotRef.current.offsetLeft,
-        y: daySlotRef.current.offsetTop,
-      });
-    }
-  }, [day, today, toggleDaySlot]);
+  const handleClick = useCallback(
+    (event) => {
+      if (day <= today && daySlotRef.current) {
+        if (isOpen) {
+          closeDaySlot();
+        } else {
+          openDaySlot({
+            day,
+            daySlotElement: daySlotRef.current,
+          });
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+    },
+    [day, today, isOpen, openDaySlot, closeDaySlot]
+  );
 
   let extraStyles = "text-current bg-transparent";
 
@@ -81,29 +98,40 @@ function TimeInput() {
   return (
     <div>
       <TimePieceInput /> : <TimePieceInput />
-      <select className="ml-1">
-        <option selected>am</option>
+      <select className="ml-1" defaultValue="am">
+        <option>am</option>
         <option>pm</option>
       </select>
     </div>
   );
 }
 
-type Position = { x: number; y: number };
 type DayBubbleProps = {
   day: DateTime;
-  openDayPosition: Position;
+  currentDaySlotRef: RefObject<HTMLDivElement>;
+  closeDaySlot: () => void;
 };
-function DayBubble({ day, openDayPosition: { x, y } }: DayBubbleProps) {
+function DayBubble({ day, currentDaySlotRef, closeDaySlot }: DayBubbleProps) {
+  const bubbleRef = useRef<HTMLDivElement | null>(null);
+
+  useOnClickOutside(closeDaySlot, [bubbleRef, currentDaySlotRef]);
+  useGlobalKeyHandler("Escape", closeDaySlot);
+
+  useLayoutEffect(() => {
+    if (bubbleRef.current && currentDaySlotRef.current) {
+      const bubble = bubbleRef.current;
+      const slot = currentDaySlotRef.current;
+      bubble.style.top = `calc(${slot.offsetTop + slot.offsetHeight}px + 1em)`;
+      bubble.style.left = "0px";
+    }
+  });
+
   return (
     <div
       className="absolute z-50 w-full pb-8 bg-white shadow-xl border border-gray-200 border-solid"
-      style={{
-        top: y + 48,
-        left: 0,
-      }}
+      ref={bubbleRef}
     >
-      <h3 className="py-4">{day.toFormat("EEEE, MMM. d, y")}</h3>
+      <h3 className="py-4 text-2xl">{day.toFormat("EEEE, MMM. d, y")}</h3>
 
       <form className="text-left px-8 pt-4">
         <DailyActivity emoji="☀️" title="Wake up time">
@@ -141,25 +169,26 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
   const weekdays = Info.weekdays("short");
 
   const [openDay, setOpenDay] = useState<DateTime | null>(null);
-  const [openDayPosition, setOpenDayPosition] = useState<Position | null>(null);
+  const currentDaySlotRef = useRef<HTMLDivElement | null>(null);
 
-  const toggleDaySlot = ({
-    day,
-    x,
-    y,
-  }: {
-    day: DateTime;
-    x: number;
-    y: number;
-  }) => {
-    if (openDay && openDay.equals(day)) {
-      setOpenDay(null);
-      setOpenDayPosition(null);
-    } else {
-      setOpenDayPosition({ x, y });
+  const closeDaySlot = useCallback(() => {
+    currentDaySlotRef.current = null;
+    setOpenDay(null);
+  }, []);
+
+  const openDaySlot = useCallback(
+    ({
+      day,
+      daySlotElement,
+    }: {
+      day: DateTime;
+      daySlotElement: HTMLDivElement;
+    }) => {
+      currentDaySlotRef.current = daySlotElement;
       setOpenDay(day);
-    }
-  };
+    },
+    []
+  );
 
   return (
     <div className="p-8">
@@ -182,7 +211,8 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
               {day ? (
                 <DaySlot
                   day={day}
-                  toggleDaySlot={toggleDaySlot}
+                  openDaySlot={openDaySlot}
+                  closeDaySlot={closeDaySlot}
                   isOpen={!!openDay && day.equals(openDay)}
                 />
               ) : (
@@ -191,8 +221,12 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
             </div>
           );
         })}
-        {openDay && openDayPosition ? (
-          <DayBubble day={openDay} openDayPosition={openDayPosition} />
+        {openDay ? (
+          <DayBubble
+            day={openDay}
+            currentDaySlotRef={currentDaySlotRef}
+            closeDaySlot={closeDaySlot}
+          />
         ) : null}
       </div>
     </div>
