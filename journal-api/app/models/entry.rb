@@ -1,6 +1,10 @@
 class Entry < ApplicationRecord
   belongs_to :entry_type
 
+  def self.daily_entries(day)
+    where(day: day).joins(:entry_type).order("entry_types.sort_position")
+  end
+
   def value
     return boolean_value if entry_type.boolean_data_type?
     return time_value if entry_type.time_data_type?

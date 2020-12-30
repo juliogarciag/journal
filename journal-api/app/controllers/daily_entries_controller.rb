@@ -7,7 +7,7 @@ class DailyEntriesController < ApplicationController
   private
 
   def load_and_ensure_daily_entries
-    current_entries = Entry.where(day: params[:date])
+    current_entries = Entry.daily_entries(params[:date])
 
     all_entry_type_ids = EntryType.pluck(:id)
     current_entry_type_ids = current_entries.pluck(:entry_type_id)

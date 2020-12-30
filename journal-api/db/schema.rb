@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_30_004124) do
+ActiveRecord::Schema.define(version: 2020_12_30_183527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,7 +33,9 @@ ActiveRecord::Schema.define(version: 2020_12_30_004124) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "emoji"
+    t.integer "sort_position"
     t.index ["name"], name: "index_entry_types_on_name", unique: true
+    t.index ["sort_position"], name: "index_entry_types_on_sort_position", unique: true
   end
 
   add_foreign_key "entries", "entry_types"
