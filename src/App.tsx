@@ -1,6 +1,8 @@
 import React, {
+  FormEvent,
   ReactNode,
   RefObject,
+  Suspense,
   useCallback,
   useLayoutEffect,
   useRef,
@@ -13,6 +15,15 @@ import useToday from "./useToday";
 import Button from "./atoms/Button";
 import useOnClickOutside from "./useOnClickOutside";
 import useGlobalKeyHandler from "./useGlobalKeyHandler";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
+
+const API_BASE_URL = "http://localhost:3000";
 
 type DaySlotProps = {
   day: DateTime;
@@ -83,28 +94,156 @@ function DailyActivity({ emoji, title, children }: DailyActivityProps) {
   );
 }
 
-function TimePieceInput() {
+type TimePieceInputProps = {
+  value: number;
+  onChange: (text: string) => void;
+  max: number;
+};
+function TimePieceInput({ value, onChange, max }: TimePieceInputProps) {
+  function handleChange(event: FormEvent<HTMLInputElement>) {
+    onChange(event.currentTarget.value);
+  }
+
   return (
     <input
       type="number"
       min="0"
-      max="11"
+      max={max}
       className="border rounded-lg border-gray-400 w-12 px-1 text-center"
+      value={value}
+      onChange={handleChange}
     />
   );
 }
 
-function TimeInput() {
+type TimeInputProps = { value: string; onChange: (value: string) => void };
+function TimeInput({ value, onChange }: TimeInputProps) {
+  let hourPart: number;
+  let minutePart: number;
+  let meridiemPart: string;
+
+  if (value) {
+    const dateTime = DateTime.fromFormat(value, "t");
+    [hourPart, minutePart, meridiemPart] = [
+      Number(dateTime.toFormat("h")),
+      Number(dateTime.toFormat("m")),
+      dateTime.toFormat("a").toLowerCase(),
+    ];
+  } else {
+    [hourPart, minutePart, meridiemPart] = [0, 0, "am"];
+  }
+
+  const handleHourChange = useCallback(
+    (hour) => {
+      const newValue = `${hour}:${minutePart} ${meridiemPart}`;
+      onChange(newValue);
+    },
+    [minutePart, meridiemPart, onChange]
+  );
+  const handleMinuteChange = useCallback(
+    (minute) => {
+      const newValue = `${hourPart}:${minute} ${meridiemPart}`;
+      onChange(newValue);
+    },
+    [hourPart, meridiemPart, onChange]
+  );
+  const handleMeridianChange = useCallback(
+    (event: FormEvent<HTMLSelectElement>) => {
+      const newValue = `${hourPart}:${minutePart} ${event.currentTarget.value}`;
+      onChange(newValue);
+    },
+    [hourPart, minutePart, onChange]
+  );
+
   return (
     <div>
-      <TimePieceInput /> : <TimePieceInput />
-      <select className="ml-1" defaultValue="am">
+      <TimePieceInput value={hourPart} onChange={handleHourChange} max={11} /> :{" "}
+      <TimePieceInput
+        value={minutePart}
+        onChange={handleMinuteChange}
+        max={59}
+      />
+      <select
+        className="ml-1"
+        value={meridiemPart}
+        onChange={handleMeridianChange}
+      >
         <option>am</option>
         <option>pm</option>
       </select>
     </div>
   );
 }
+
+type BooleanInputProps = {
+  value: boolean | null;
+  onChange: (value: boolean | null) => void;
+};
+function BooleanInput({ value, onChange }: BooleanInputProps) {
+  const handleYesClick = useCallback(() => {
+    if (value === true) {
+      onChange(null);
+    } else {
+      onChange(true);
+    }
+  }, [value, onChange]);
+
+  const handleNoClick = useCallback(() => {
+    if (value === false) {
+      onChange(null);
+    } else {
+      onChange(false);
+    }
+  }, [value, onChange]);
+
+  return (
+    <>
+      <Button
+        onClick={handleYesClick}
+        variant={value === true ? "outstanding" : "default"}
+      >
+        Yes 👌
+      </Button>
+      <Button
+        onClick={handleNoClick}
+        variant={value === false ? "outstanding" : "default"}
+      >
+        No 🙈
+      </Button>
+    </>
+  );
+}
+
+type QuantityInputProps = { value: number; onChange: (value: number) => void };
+function QuantityInput({ value, onChange }: QuantityInputProps) {
+  const handleDownClick = useCallback(() => {
+    onChange(value - 1);
+  }, [onChange, value]);
+
+  const handleUpClick = useCallback(() => {
+    onChange(value + 1);
+  }, [onChange, value]);
+
+  return (
+    <>
+      <Button onClick={handleDownClick}>↓</Button>
+      <code className="p-1">{value}</code>
+      <Button onClick={handleUpClick}>↑</Button>
+    </>
+  );
+}
+
+type EntryType = {
+  id: number;
+  entryTypeId: number;
+  value: string | number | boolean;
+  entryType: {
+    id: number;
+    name: string;
+    emoji: string;
+    dataType: string;
+  };
+};
 
 type DayBubbleProps = {
   day: DateTime;
@@ -113,6 +252,17 @@ type DayBubbleProps = {
 };
 function DayBubble({ day, currentDaySlotRef, closeDaySlot }: DayBubbleProps) {
   const bubbleRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchDailyEntries = useCallback(async () => {
+    const response = await fetch(
+      API_BASE_URL + "/daily-entries/" + day.toISODate()
+    );
+    return response.json();
+  }, [day]);
+
+  const dailyEntriesQueryKey = ["entries", day.toISODate()];
+  const { data } = useQuery(dailyEntriesQueryKey, fetchDailyEntries);
+  const entries: Array<EntryType> = data.entries;
 
   useOnClickOutside(closeDaySlot, [bubbleRef, currentDaySlotRef]);
   useGlobalKeyHandler("Escape", closeDaySlot);
@@ -126,6 +276,31 @@ function DayBubble({ day, currentDaySlotRef, closeDaySlot }: DayBubbleProps) {
     }
   });
 
+  const queryClient = useQueryClient();
+
+  const updateValueMutation = useMutation(
+    async (values: {
+      entry: EntryType;
+      value: string | boolean | number | null;
+    }) => {
+      const { entry, value } = values;
+
+      await fetch(API_BASE_URL + "/entries/" + entry.id, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ entry: { value } }),
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(dailyEntriesQueryKey);
+      },
+    }
+  );
+
   return (
     <div
       className="absolute z-50 w-full pb-8 bg-white shadow-xl border border-gray-200 border-solid"
@@ -134,29 +309,38 @@ function DayBubble({ day, currentDaySlotRef, closeDaySlot }: DayBubbleProps) {
       <h3 className="py-4 text-2xl">{day.toFormat("EEEE, MMM. d, y")}</h3>
 
       <form className="text-left px-8 pt-4">
-        <DailyActivity emoji="☀️" title="Wake up time">
-          <TimeInput />
-        </DailyActivity>
-        <DailyActivity emoji="💪" title="Workout?">
-          <Button>Yes 👌</Button>
-          <Button>No 🙈</Button>
-        </DailyActivity>
-        <DailyActivity emoji="🦷" title="Did you brush your teeth?">
-          <Button>Yes 👌</Button>
-          <Button>No 🙈</Button>
-        </DailyActivity>
-        <DailyActivity emoji="😌" title="Skin Care?">
-          <Button>Yes 👌</Button>
-          <Button>No 🙈</Button>
-        </DailyActivity>
-        <DailyActivity emoji="🦖" title="Kraken Releases">
-          <Button>↓</Button>
-          <code className="p-1">0</code>
-          <Button>↑</Button>
-        </DailyActivity>
-        <DailyActivity emoji="🌙" title="Sleep time">
-          <TimeInput />
-        </DailyActivity>
+        {entries.map((entry) => {
+          const { id, value, entryType } = entry;
+          const { emoji, name, dataType } = entryType;
+          return (
+            <DailyActivity key={id} emoji={emoji} title={name}>
+              {dataType === "time" ? (
+                <TimeInput
+                  value={(value as string) || ""}
+                  onChange={(value) => {
+                    updateValueMutation.mutate({ entry, value });
+                  }}
+                />
+              ) : null}
+              {dataType === "boolean" ? (
+                <BooleanInput
+                  value={value as boolean | null}
+                  onChange={(value) => {
+                    updateValueMutation.mutate({ entry, value });
+                  }}
+                />
+              ) : null}
+              {dataType === "quantity" ? (
+                <QuantityInput
+                  value={(value as number) || 0}
+                  onChange={(value) => {
+                    updateValueMutation.mutate({ entry, value });
+                  }}
+                />
+              ) : null}
+            </DailyActivity>
+          );
+        })}
       </form>
     </div>
   );
@@ -222,24 +406,38 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
           );
         })}
         {openDay ? (
-          <DayBubble
-            day={openDay}
-            currentDaySlotRef={currentDaySlotRef}
-            closeDaySlot={closeDaySlot}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <DayBubble
+              day={openDay}
+              currentDaySlotRef={currentDaySlotRef}
+              closeDaySlot={closeDaySlot}
+            />
+          </Suspense>
         ) : null}
       </div>
     </div>
   );
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+  },
+});
+
 function App() {
   return (
-    <div className="text-center">
-      {times(12).map((month) => {
-        return <CalendarMonth key={month} year={2021} month={month + 1} />;
-      })}
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="text-center">
+          {times(12).map((month) => {
+            return <CalendarMonth key={month} year={2021} month={month + 1} />;
+          })}
+        </div>
+      </Suspense>
+    </QueryClientProvider>
   );
 }
 

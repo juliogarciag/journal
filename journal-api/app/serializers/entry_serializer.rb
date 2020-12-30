@@ -9,6 +9,7 @@ class EntrySerializer
     {
       id: entry.id,
       entry_type: EntryTypeSerializer.new(entry.entry_type).serialize,
+      entry_type_id: entry.entry_type_id,
       value: entry.value
     }
   end

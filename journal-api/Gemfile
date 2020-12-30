@@ -8,7 +8,7 @@ gem "pg"
 gem "puma"
 gem "bootsnap", require: false
 gem "olive_branch"
-gem "batch-loader"
+gem "rack-cors"
 
 group :development, :test do
   gem "pry-rails"

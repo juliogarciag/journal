@@ -60,7 +60,6 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    batch-loader (1.5.0)
     bootsnap (1.5.1)
       msgpack (~> 1.0)
     builder (3.2.4)
@@ -108,6 +107,8 @@ GEM
     puma (5.1.1)
       nio4r (~> 2.0)
     rack (2.2.3)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (6.1.0)
@@ -161,7 +162,6 @@ PLATFORMS
   universal-darwin-20
 
 DEPENDENCIES
-  batch-loader
   bootsnap
   byebug
   listen
@@ -169,6 +169,7 @@ DEPENDENCIES
   pg
   pry-rails
   puma
+  rack-cors
   rails (~> 6.1.0)
   spring
 
