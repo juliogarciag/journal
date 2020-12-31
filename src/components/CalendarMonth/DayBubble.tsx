@@ -1,14 +1,12 @@
 import { ReactNode, RefObject, useLayoutEffect, useRef } from "react";
 import { DateTime } from "luxon";
 import { useMutation, useQueryClient } from "react-query";
-import useOnClickOutside from "lib/useOnClickOutside";
 import useGlobalKeyHandler from "lib/useGlobalKeyHandler";
 import TimeInput from "./TimeInput";
 import BooleanInput from "./BooleanInput";
 import QuantityInput from "./QuantityInput";
 import useDailyEntries, { getQueryKey } from "./useDailyEntries";
-
-const API_BASE_URL = "http://localhost:3000";
+import fetchApi from "fetchApi";
 
 type EntryType = {
   id: number;
@@ -47,7 +45,6 @@ function DayBubble({ day, currentDaySlotRef, closeDaySlot }: DayBubbleProps) {
   const { data } = useDailyEntries(day);
   const entries: Array<EntryType> = data.entries;
 
-  useOnClickOutside(closeDaySlot, [bubbleRef, currentDaySlotRef]);
   useGlobalKeyHandler("Escape", closeDaySlot);
 
   useLayoutEffect(() => {
@@ -68,7 +65,7 @@ function DayBubble({ day, currentDaySlotRef, closeDaySlot }: DayBubbleProps) {
     }) => {
       const { entry, value } = values;
 
-      await fetch(API_BASE_URL + "/entries/" + entry.id, {
+      await fetchApi(`/entries/${entry.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

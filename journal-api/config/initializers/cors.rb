@@ -8,7 +8,10 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     if Rails.env.development?
-      origins %r{https?://localhost(:[0-9]+)?/?\z}
+      origins [
+        %r{https?://localhost(:[0-9]+)?/?\z},
+        %r{https?://192.168.1.[0-9]+(:[0-9]+)?/?\z},
+      ]
     end
 
     resource '*',

@@ -15,7 +15,7 @@ function DaySlot({ day, openDaySlot, closeDaySlot, isOpen }: DaySlotProps) {
   const today = useToday();
   const daySlotRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = useCallback(
+  const handleClick = useCallback(
     (event) => {
       if (day <= today && daySlotRef.current) {
         if (isOpen) {
@@ -50,7 +50,7 @@ function DaySlot({ day, openDaySlot, closeDaySlot, isOpen }: DaySlotProps) {
   return (
     <div
       className={`rounded-full p-1 w-full h-full ${extraStyles}`}
-      onMouseDown={handleMouseDown}
+      onClick={handleClick}
       ref={daySlotRef}
     >
       {day.day}

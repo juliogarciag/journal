@@ -64,7 +64,8 @@ function TimeInput({ value, onChange }: TimeInputProps) {
 
   return (
     <div>
-      <TimePieceInput value={hourPart} onChange={handleHourChange} max={11} /> :{" "}
+      <TimePieceInput value={hourPart} onChange={handleHourChange} max={11} />
+      <span> : </span>
       <TimePieceInput
         value={minutePart}
         onChange={handleMinuteChange}
