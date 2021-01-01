@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import Button from "components/atoms/Button";
+import Spacer from "components/atoms/Spacer";
 
 type BooleanInputProps = {
   value: boolean | null;
@@ -30,6 +31,7 @@ function BooleanInput({ value, onChange }: BooleanInputProps) {
       >
         Yes 👌
       </Button>
+      <Spacer className="w-2" />
       <Button
         onClick={handleNoClick}
         variant={value === false ? "outstanding" : "default"}

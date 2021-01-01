@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { DateTime, Info } from "luxon";
 import useMonthSlots from "useMonthSlots";
 import DaySlot from "./DaySlot";
@@ -83,13 +83,11 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
           );
         })}
         {openDay ? (
-          <Suspense fallback={<div>Loading...</div>}>
-            <DayBubble
-              day={openDay}
-              currentDaySlotRef={currentDaySlotRef}
-              closeDaySlot={closeDaySlot}
-            />
-          </Suspense>
+          <DayBubble
+            day={openDay}
+            currentDaySlotRef={currentDaySlotRef}
+            closeDaySlot={closeDaySlot}
+          />
         ) : null}
       </div>
     </div>

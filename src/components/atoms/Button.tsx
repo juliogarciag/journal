@@ -13,6 +13,7 @@ type ButtonProps = {
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   disabled?: boolean;
+  className?: string;
 };
 function Button({
   children,
@@ -20,6 +21,7 @@ function Button({
   style = {},
   variant = "default",
   disabled = false,
+  className = "",
 }: ButtonProps) {
   return (
     <button
@@ -27,7 +29,8 @@ function Button({
       className={clsx(
         "px-2 py-1 rounded-full border-solid border border-gray-400",
         VARIANT_CLASSES[variant] || "",
-        { "text-gray-400 cursor-not-allowed": disabled }
+        { "text-gray-400 cursor-not-allowed": disabled },
+        className
       )}
       onClick={onClick}
       style={{ outline: "none", ...style }}

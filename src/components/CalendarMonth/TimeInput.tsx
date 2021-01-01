@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import { FormEvent, useCallback } from "react";
+import "./TimeInput.css";
 
 type TimePieceInputProps = {
   value: number;
@@ -16,6 +17,8 @@ function TimePieceInput({ value, onChange, max }: TimePieceInputProps) {
       type="number"
       min="0"
       max={max}
+      pattern="[0-9]*"
+      inputMode="numeric"
       className="border rounded-lg border-gray-400 w-12 px-1 text-center"
       value={value}
       onChange={handleChange}
@@ -63,22 +66,24 @@ function TimeInput({ value, onChange }: TimeInputProps) {
   );
 
   return (
-    <div>
+    <div className="flex">
       <TimePieceInput value={hourPart} onChange={handleHourChange} max={11} />
-      <span> : </span>
+      <span className="mx-1"> : </span>
       <TimePieceInput
         value={minutePart}
         onChange={handleMinuteChange}
         max={59}
       />
-      <select
-        className="ml-1"
-        value={meridiemPart}
-        onChange={handleMeridianChange}
-      >
-        <option>am</option>
-        <option>pm</option>
-      </select>
+      <div className="meridian-select-wrapper ml-1">
+        <select
+          className="appearance-none bg-transparent px-2 border-none w-full"
+          value={meridiemPart}
+          onChange={handleMeridianChange}
+        >
+          <option value="am">am</option>
+          <option value="pm">pm</option>
+        </select>
+      </div>
     </div>
   );
 }
