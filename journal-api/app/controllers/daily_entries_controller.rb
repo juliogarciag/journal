@@ -1,5 +1,6 @@
 class DailyEntriesController < ApplicationController
   def show
+    sleep rand(1..2)
     entries = load_and_ensure_daily_entries
     render json: { entries: serialize_entries(entries) }
   end

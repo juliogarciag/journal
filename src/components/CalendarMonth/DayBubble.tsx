@@ -1,6 +1,7 @@
 import { ReactNode, RefObject, Suspense, useLayoutEffect, useRef } from "react";
 import { DateTime } from "luxon";
 import { useMutation, useQueryClient } from "react-query";
+import produce from "immer";
 import useGlobalKeyHandler from "lib/useGlobalKeyHandler";
 import TimeInput from "./TimeInput";
 import BooleanInput from "./BooleanInput";
@@ -9,16 +10,22 @@ import useDailyEntries, { getQueryKey } from "./useDailyEntries";
 import fetchApi from "fetchApi";
 import Button from "components/atoms/Button";
 
+type EntryValueType = string | number | boolean | null;
+
 type EntryType = {
   id: number;
   entryTypeId: number;
-  value: string | number | boolean;
+  value: EntryValueType;
   entryType: {
     id: number;
     name: string;
     emoji: string;
     dataType: string;
   };
+};
+
+type EntriesQueryData = {
+  entries: Array<EntryType>;
 };
 
 type DailyActivityProps = { emoji: string; title: string; children: ReactNode };
@@ -64,7 +71,38 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
       });
     },
     {
-      onSuccess: () => {
+      onMutate: async (values: { entry: EntryType; value: EntryValueType }) => {
+        const { entry, value } = values;
+
+        await queryClient.cancelQueries(dailyEntriesQueryKey);
+
+        const previousData = queryClient.getQueryData<EntriesQueryData>(
+          dailyEntriesQueryKey
+        );
+
+        if (previousData) {
+          queryClient.setQueryData<EntriesQueryData>(
+            dailyEntriesQueryKey,
+            produce(previousData, (draft) => {
+              const index = previousData.entries.findIndex(
+                (e) => e.id === entry.id
+              );
+              const draftEntry = draft.entries[index];
+              if (draftEntry) {
+                draftEntry.value = value;
+              }
+            })
+          );
+        }
+
+        return { previousData };
+      },
+      onError: (err, variables, context) => {
+        if (context?.previousData) {
+          queryClient.setQueryData(dailyEntriesQueryKey, context.previousData);
+        }
+      },
+      onSettled: () => {
         queryClient.invalidateQueries(dailyEntriesQueryKey);
       },
     }

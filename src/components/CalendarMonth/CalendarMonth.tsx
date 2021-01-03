@@ -55,7 +55,7 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
             <div
               key={index}
               className="p-2 self-center justify-self-center w-12 h-12"
-              onMouseOver={day ? () => prefetchDay(day) : noop}
+              onMouseDown={day ? () => prefetchDay(day) : noop}
             >
               {day ? (
                 <DaySlot

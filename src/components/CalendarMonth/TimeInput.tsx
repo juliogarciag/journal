@@ -4,7 +4,7 @@ import "./TimeInput.css";
 
 type TimePieceInputProps = {
   value: number;
-  onChange: (text: string) => void;
+  onChange: (text: string | null) => void;
   max: number;
 };
 function TimePieceInput({ value, onChange, max }: TimePieceInputProps) {
@@ -45,21 +45,23 @@ function TimeInput({ value, onChange }: TimeInputProps) {
 
   const handleHourChange = useCallback(
     (hour) => {
-      const newValue = `${hour}:${minutePart} ${meridiemPart}`;
+      const newValue = `${hour || 0}:${minutePart} ${meridiemPart}`;
       onChange(newValue);
     },
     [minutePart, meridiemPart, onChange]
   );
   const handleMinuteChange = useCallback(
     (minute) => {
-      const newValue = `${hourPart}:${minute} ${meridiemPart}`;
+      const newValue = `${hourPart}:${minute || 0} ${meridiemPart}`;
       onChange(newValue);
     },
     [hourPart, meridiemPart, onChange]
   );
   const handleMeridianChange = useCallback(
     (event: FormEvent<HTMLSelectElement>) => {
-      const newValue = `${hourPart}:${minutePart} ${event.currentTarget.value}`;
+      const newValue = `${hourPart}:${minutePart} ${
+        event.currentTarget.value || "am"
+      }`;
       onChange(newValue);
     },
     [hourPart, minutePart, onChange]
