@@ -1,10 +1,19 @@
 import { DateTime } from "luxon";
-import { useMemo } from "react";
+
+const globalDaysCache = new Map<string, DateTime>();
 
 function useToday(): DateTime {
-  // TODO: Use real today
-  const today = useMemo(() => DateTime.local(2021, 1, 20).startOf("day"), []);
-  return today;
+  const currentDateTime = DateTime.local();
+  const dayKey = currentDateTime.toISODate();
+  const cachedDateTime = globalDaysCache.get(dayKey);
+
+  if (cachedDateTime) {
+    return cachedDateTime;
+  } else {
+    const currentDay = currentDateTime.startOf("day");
+    globalDaysCache.set(dayKey, currentDay);
+    return currentDay;
+  }
 }
 
 export default useToday;
