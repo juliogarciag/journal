@@ -14,7 +14,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
       ]
     elsif Rails.env.production?
       origins [
-        %r{http://monkey-journal.herokuapp.com},
+        %r{https://monkey-journal.herokuapp.com},
       ]
     end
 
