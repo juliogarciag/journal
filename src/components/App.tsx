@@ -1,10 +1,7 @@
-import React, { useEffect } from "react";
-import times from "lib/times";
 import { QueryClient, QueryClientProvider } from "react-query";
-import CalendarMonth from "./CalendarMonth";
-import useToday from "lib/useToday";
-import usePrefetchDay from "./CalendarMonth/usePrefetchDay";
-import { Info } from "luxon";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "pages/HomePage";
+import SettingsPage from "pages/SettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,29 +11,15 @@ const queryClient = new QueryClient({
   },
 });
 
-const MONTHS_PER_YEAR = Info.months().length;
-
-function CalendarYear({ year }: { year: number }) {
-  const today = useToday();
-  const prefetchDay = usePrefetchDay();
-
-  useEffect(() => {
-    prefetchDay(today);
-  }, [prefetchDay, today]);
-
-  return (
-    <div className="text-center">
-      {times(MONTHS_PER_YEAR).map((month) => {
-        return <CalendarMonth key={month} year={2021} month={month + 1} />;
-      })}
-    </div>
-  );
-}
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <CalendarYear year={2021} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
