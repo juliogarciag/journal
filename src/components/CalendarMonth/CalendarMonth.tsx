@@ -3,8 +3,6 @@ import { DateTime, Info } from "luxon";
 import useMonthSlots from "useMonthSlots";
 import DaySlot from "./DaySlot";
 import DayBubble from "./DayBubble";
-import noop from "lib/noop";
-import usePrefetchDay from "./usePrefetchDay";
 
 const WEEK_DAYS = Info.weekdays("short");
 const MONTHS_INFO = Info.months();
@@ -36,8 +34,6 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
     []
   );
 
-  const prefetchDay = usePrefetchDay();
-
   return (
     <div className="p-8">
       <h2 className="text-2xl">{monthName}</h2>
@@ -55,7 +51,6 @@ function CalendarMonth({ year, month }: CalendarMonthProps) {
             <div
               key={index}
               className="p-2 self-center justify-self-center w-12 h-12"
-              onMouseDown={day ? () => prefetchDay(day) : noop}
             >
               {day ? (
                 <DaySlot

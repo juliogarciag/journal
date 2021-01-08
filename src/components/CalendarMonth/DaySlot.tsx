@@ -1,6 +1,7 @@
 import useToday from "lib/useToday";
 import { DateTime } from "luxon";
 import { useCallback, useRef } from "react";
+import usePrefetchDay from "./usePrefetchDay";
 
 type DaySlotProps = {
   day: DateTime;
@@ -13,6 +14,8 @@ type DaySlotProps = {
 };
 function DaySlot({ day, openDaySlot, closeDaySlot, isOpen }: DaySlotProps) {
   const today = useToday();
+  const isEditable = day <= today;
+
   const daySlotRef = useRef<HTMLDivElement>(null);
 
   const handleClick = useCallback(
@@ -33,14 +36,22 @@ function DaySlot({ day, openDaySlot, closeDaySlot, isOpen }: DaySlotProps) {
     [day, today, isOpen, openDaySlot, closeDaySlot]
   );
 
+  const prefetchDay = usePrefetchDay();
+
+  const handleMouseOver = useCallback(() => {
+    if (isEditable) {
+      prefetchDay(day);
+    }
+  }, [day, isEditable, prefetchDay]);
+
   let extraStyles = "text-current bg-transparent";
 
   if (today.equals(day)) {
     extraStyles = "cursor-pointer text-white bg-green-500 hover:bg-green-600";
-  } else if (day > today) {
-    extraStyles = "text-gray-300 bg-transparent font-medium";
-  } else {
+  } else if (isEditable) {
     extraStyles = "cursor-pointer hover:bg-green-100";
+  } else {
+    extraStyles = "text-gray-300 bg-transparent font-medium";
   }
 
   if (isOpen) {
@@ -51,6 +62,7 @@ function DaySlot({ day, openDaySlot, closeDaySlot, isOpen }: DaySlotProps) {
     <div
       className={`rounded-full p-1 w-full h-full ${extraStyles}`}
       onClick={handleClick}
+      onMouseOver={handleMouseOver}
       ref={daySlotRef}
     >
       {day.day}
