@@ -1,0 +1,8 @@
+.link svg path {
+  @apply fill-current;
+  @apply text-gray-600;
+}
+
+.activeLink svg path {
+  @apply text-green-600;
+}

@@ -1,5 +1,4 @@
 import { FormEvent, useCallback } from "react";
-import "./TimeInput.css";
 
 type TimeInputProps = { value: string; onChange: (value: string) => void };
 function TimeInput({ value, onChange }: TimeInputProps) {
