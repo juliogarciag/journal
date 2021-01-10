@@ -138,6 +138,8 @@ GEM
       rake (>= 0.8.7)
       thor (~> 1.0)
     rake (13.0.3)
+    ranked-model (0.4.6)
+      activerecord (>= 4.2)
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -171,6 +173,7 @@ DEPENDENCIES
   puma
   rack-cors
   rails (~> 6.1.0)
+  ranked-model
   spring
 
 RUBY VERSION

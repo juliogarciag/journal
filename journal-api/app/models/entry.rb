@@ -2,7 +2,7 @@ class Entry < ApplicationRecord
   belongs_to :entry_type
 
   def self.daily_entries(day)
-    where(day: day).joins(:entry_type).order("entry_types.sort_position")
+    where(day: day).joins(:entry_type).order("entry_types.row_order")
   end
 
   def value

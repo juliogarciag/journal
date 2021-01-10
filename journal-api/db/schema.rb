@@ -32,11 +32,11 @@ ActiveRecord::Schema.define(version: 2021_01_09_150904) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "sort_position"
+    t.integer "row_order"
     t.string "icon"
     t.string "icon_color"
     t.index ["name"], name: "index_entry_types_on_name", unique: true
-    t.index ["sort_position"], name: "index_entry_types_on_sort_position", unique: true
+    t.index ["row_order"], name: "index_entry_types_on_row_order", unique: true
   end
 
   add_foreign_key "entries", "entry_types"

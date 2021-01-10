@@ -1144,6 +1144,38 @@
   resolved "https://registry.able.co/@csstools%2fnormalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@dnd-kit/accessibility@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.able.co/@dnd-kit%2faccessibility/-/accessibility-1.0.0.tgz#306726518b89d588082f27a6ed9e4aa2cc145a34"
+  integrity sha512-jigv1H7IleOTbtsYoErEwq35EtTGBdSWGKuHt/UVtRRV4qJJXP8+/Wm/glUyz/ryT2dhlGU1ty7v5gsr3zRiQA==
+  dependencies:
+    tslib "^2.0.0"
+
+"@dnd-kit/core@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.able.co/@dnd-kit%2fcore/-/core-1.0.0.tgz#05357d637739ea413c7e9b4917732eec8c209e7b"
+  integrity sha512-3w1q0ez6Pzy7rz5c20MvarKlNPQPazRWzciVSLYdXt7SziQiBEMC5WdwyZR4lp9YYgx6alPLUkUUiLvBSKtDvg==
+  dependencies:
+    "@dnd-kit/accessibility" "^1.0.0"
+    "@dnd-kit/utilities" "^1.0.0"
+    tslib "^2.0.0"
+
+"@dnd-kit/sortable@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.able.co/@dnd-kit%2fsortable/-/sortable-1.0.0.tgz#72de3f9a7f53aa0dc4cf599125828a9113a872ed"
+  integrity sha512-sAaJLMqr1EGOwV0+U3Djsz5roBD8KmMba1YAJoeCTxKQC4bFLBxJBLtBDTigGGNcQGiCENs5h3cWRXQu6p4vig==
+  dependencies:
+    "@dnd-kit/core" "^1.0.0"
+    "@dnd-kit/utilities" "^1.0.0"
+    tslib "^2.0.0"
+
+"@dnd-kit/utilities@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.able.co/@dnd-kit%2futilities/-/utilities-1.0.0.tgz#175a203f0cd2fc1c7d09f9a92edf37b4c03d9a04"
+  integrity sha512-ukMGUI5Op500zn6+YhP5vL777ieBYmZ0SZYI3XfoPFtcGOkM/kKKeZECY37QJMbP6b36QqcHRVK1bYJHZBqIVg==
+  dependencies:
+    tslib "^2.0.0"
+
 "@eslint/eslintrc@^0.2.2":
   version "0.2.2"
   resolved "https://registry.able.co/@eslint%2feslintrc/-/eslintrc-0.2.2.tgz#d01fc791e2fc33e88a29d6f3dc7e93d0cd784b76"
@@ -10787,6 +10819,11 @@ tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://registry.able.co/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
+tslib@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.able.co/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
+  integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
 
 tslib@^2.0.3:
   version "2.0.3"

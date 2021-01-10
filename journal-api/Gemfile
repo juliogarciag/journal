@@ -9,6 +9,7 @@ gem "puma"
 gem "bootsnap", require: false
 gem "olive_branch"
 gem "rack-cors"
+gem "ranked-model"
 
 group :development, :test do
   gem "pry-rails"
