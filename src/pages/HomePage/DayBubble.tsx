@@ -9,31 +9,31 @@ import QuantityInput from "./QuantityInput";
 import useDailyEntries, { getQueryKey } from "./useDailyEntries";
 import fetchApi from "fetchApi";
 import Button from "components/atoms/Button";
-
-type EntryValueType = string | number | boolean | null;
-
-type EntryType = {
-  id: number;
-  entryTypeId: number;
-  value: EntryValueType;
-  entryType: {
-    id: number;
-    name: string;
-    emoji: string;
-    dataType: string;
-  };
-};
+import { EntryType, EntryValueType } from "types";
+import EntryTypeIcon from "components/EntryTypeIcon/EntryTypeIcon";
 
 type EntriesQueryData = {
   entries: Array<EntryType>;
 };
 
-type DailyActivityProps = { emoji: string; title: string; children: ReactNode };
-function DailyActivity({ emoji, title, children }: DailyActivityProps) {
+type DailyActivityProps = {
+  icon: string;
+  title: string;
+  iconColor: string;
+  children: ReactNode;
+};
+function DailyActivity({
+  icon,
+  iconColor,
+  title,
+  children,
+}: DailyActivityProps) {
   return (
     <div className="flex items-center pb-4">
       <div className="font-semibold w-64">
-        <span className="pr-2">{emoji}</span>
+        <span className="pr-2">
+          <EntryTypeIcon icon={icon} color={iconColor} />
+        </span>
         <span>{title}</span>
       </div>
       <div className="flex">{children}</div>
@@ -63,11 +63,7 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
 
       await fetchApi(`/entries/${entry.id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ entry: { value } }),
+        body: { entry: { value } },
       });
     },
     {
@@ -112,9 +108,14 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
     <form className="text-left pt-4">
       {entries.map((entry) => {
         const { id, value, entryType } = entry;
-        const { emoji, name, dataType } = entryType;
+        const { icon, iconColor, name, dataType } = entryType;
         return (
-          <DailyActivity key={id} emoji={emoji} title={name}>
+          <DailyActivity
+            key={id}
+            icon={icon}
+            iconColor={iconColor}
+            title={name}
+          >
             {dataType === "time" ? (
               <TimeInput
                 value={(value as string) || ""}

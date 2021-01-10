@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       width: {
         "fit-content": "fit-content",
+        124: "31em",
       },
     },
   },
