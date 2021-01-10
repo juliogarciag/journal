@@ -1,4 +1,11 @@
-import { ReactNode, RefObject, Suspense, useLayoutEffect, useRef } from "react";
+import {
+  ReactNode,
+  RefObject,
+  Suspense,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { DateTime } from "luxon";
 import { useMutation, useQueryClient } from "react-query";
 import produce from "immer";
@@ -41,20 +48,11 @@ function DailyActivity({
   );
 }
 
-type DayBubbleProps = {
-  day: DateTime;
-  closeDaySlot: () => void;
-};
-function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
-  const dailyEntriesQueryKey = getQueryKey(day);
-  const { data } = useDailyEntries(day);
-  const entries: Array<EntryType> = data.entries;
-
-  useGlobalKeyHandler("Escape", closeDaySlot);
-
+function useUpdateEntry(day: DateTime) {
   const queryClient = useQueryClient();
+  const dailyEntriesQueryKey = getQueryKey(day);
 
-  const updateValueMutation = useMutation(
+  return useMutation(
     async (values: {
       entry: EntryType;
       value: string | boolean | number | null;
@@ -103,6 +101,19 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
       },
     }
   );
+}
+
+type DayBubbleProps = {
+  day: DateTime;
+  closeDaySlot: () => void;
+};
+function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
+  const { data } = useDailyEntries(day);
+  const entries: Array<EntryType> = data.entries;
+
+  useGlobalKeyHandler("Escape", closeDaySlot);
+
+  const updateValueMutation = useUpdateEntry(day);
 
   return (
     <form className="text-left pt-4">
@@ -147,18 +158,54 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
   );
 }
 
+type BubbleTriangleProps = {
+  side?: number;
+  daySlotRef: RefObject<HTMLDivElement>;
+};
+function BubbleTriangle({ side = 16, daySlotRef }: BubbleTriangleProps) {
+  const [left, setLeft] = useState<number>(0);
+
+  useLayoutEffect(() => {
+    const daySlot = daySlotRef.current;
+    const daySlotWrapper = daySlot?.parentElement;
+
+    if (daySlot && daySlotWrapper) {
+      setLeft(daySlotWrapper.offsetLeft + daySlot.offsetWidth / 2 - 1);
+    }
+  }, [daySlotRef]);
+
+  return (
+    <div
+      className="absolute"
+      style={{
+        top: -side,
+        left,
+        width: side,
+        height: side,
+      }}
+    >
+      <svg height="100%" width="100%" viewBox="0 0 100 100">
+        <polyline
+          points="1,99 50,0 99,99"
+          className="triangle text-gray-900 stroke-current stroke-1"
+          fill="#fff"
+        />
+      </svg>
+    </div>
+  );
+}
+
 interface DayBubbleWrapperProps extends DayBubbleProps {
   currentDaySlotRef: RefObject<HTMLDivElement>;
 }
-
 function DayBubbleWrapper(props: DayBubbleWrapperProps) {
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const { currentDaySlotRef, ...otherProps } = props;
 
   useLayoutEffect(() => {
-    if (bubbleRef.current && currentDaySlotRef.current) {
-      const bubble = bubbleRef.current;
-      const slot = currentDaySlotRef.current;
+    const bubble = bubbleRef.current;
+    const slot = currentDaySlotRef.current;
+    if (bubble && slot) {
       bubble.style.top = `calc(${slot.offsetTop + slot.offsetHeight}px + 1em)`;
       bubble.style.left = "0px";
     }
@@ -169,6 +216,10 @@ function DayBubbleWrapper(props: DayBubbleWrapperProps) {
       className="absolute z-50 w-full pt-6 pb-8 px-8 bg-white shadow-xl border border-gray-200 border-solid"
       ref={bubbleRef}
     >
+      <BubbleTriangle
+        key={props.day.toISODate()}
+        daySlotRef={currentDaySlotRef}
+      />
       <Button className="absolute right-8 px-4" onClick={props.closeDaySlot}>
         close
       </Button>
