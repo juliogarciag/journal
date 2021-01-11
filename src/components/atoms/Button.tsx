@@ -1,10 +1,7 @@
 import clsx from "clsx";
 import {
-  Attributes,
   ButtonHTMLAttributes,
   CSSProperties,
-  HTMLAttributes,
-  HtmlHTMLAttributes,
   MouseEvent,
   ReactNode,
 } from "react";

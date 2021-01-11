@@ -74,7 +74,8 @@ function ButtonSelect({ options, value, onChange }: ButtonSelectProps) {
               className={clsx({
                 [selectedClassNames]: isSelected,
                 [unselectedClassNames]: !isSelected,
-                "text-gray-400 cursor-not-allowed": option.disabled,
+                "opacity-30 cursor-not-allowed": option.disabled && !isSelected,
+                "opacity-80 cursor-not-allowed": option.disabled && isSelected,
               })}
               onClick={() => selectOption(option)}
               {...(option.disabled
@@ -175,19 +176,17 @@ function EntryTypeBlock({
               {
                 value: "boolean",
                 text: "Yes / No",
-                disabled:
-                  entryType.dataType !== "boolean" && entryType.hasEntries,
+                disabled: entryType.hasEntries,
               },
               {
                 value: "time",
                 text: "Time",
-                disabled: entryType.dataType !== "time" && entryType.hasEntries,
+                disabled: entryType.hasEntries,
               },
               {
                 value: "quantity",
                 text: "Quantity",
-                disabled:
-                  entryType.dataType !== "quantity" && entryType.hasEntries,
+                disabled: entryType.hasEntries,
               },
             ]}
             value={entryType.dataType}
