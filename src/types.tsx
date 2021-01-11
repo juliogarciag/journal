@@ -6,6 +6,7 @@ export type EntryTypeType = {
   icon: string;
   iconColor: string;
   dataType: string;
+  hasEntries: boolean;
 };
 
 export type EntryType = {

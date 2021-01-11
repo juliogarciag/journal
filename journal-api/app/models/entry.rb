@@ -1,5 +1,5 @@
 class Entry < ApplicationRecord
-  belongs_to :entry_type
+  belongs_to :entry_type, counter_cache: true
 
   def self.daily_entries(day)
     where(day: day).joins(:entry_type).order("entry_types.row_order")

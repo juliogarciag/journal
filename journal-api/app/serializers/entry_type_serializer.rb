@@ -12,7 +12,8 @@ class EntryTypeSerializer
       icon: entry_type.icon,
       icon_color: entry_type.icon_color,
       data_type: entry_type.data_type,
-      row_order_position: entry_type.row_order_position
+      row_order_position: entry_type.row_order_position,
+      has_entries: entry_type.entries_count > 0
     }
   end
 end

@@ -2,26 +2,94 @@ import {
   closestCenter,
   DndContext,
   DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import clsx from "clsx";
+import Button from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import EntryTypeIcon from "components/EntryTypeIcon";
 import fetchApi from "fetchApi";
-import { CSSProperties, useCallback, useState } from "react";
+import {
+  CSSProperties,
+  Fragment,
+  KeyboardEvent,
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useState,
+} from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { EntryTypeType } from "types";
 import useUpdateEntryType from "./useUpdateEntryType";
+
+type ButtonSelectOption = {
+  value: string;
+  text: ReactNode;
+  disabled?: boolean;
+};
+type ButtonSelectProps = {
+  value: string;
+  options: Array<ButtonSelectOption>;
+  onChange: any;
+};
+function ButtonSelect({ options, value, onChange }: ButtonSelectProps) {
+  const selectedClassNames = "text-sm font-bold text-white bg-green-600";
+  const unselectedClassNames =
+    "text-sm bg-white border border-solid border-gray-300";
+
+  const [selectedValue, setSelectedValue] = useState<string>(value);
+
+  const selectOption = useCallback(
+    (option: ButtonSelectOption) => {
+      if (!option.disabled) {
+        setSelectedValue(option.value);
+        if (option.value !== value) {
+          onChange(option.value);
+        }
+      }
+    },
+    [onChange, value]
+  );
+
+  return (
+    <div className="p-2 flex">
+      {options.map((option, index) => {
+        const isSelected = option.value === selectedValue;
+        const shouldAddSpacer = index < options.length - 1;
+
+        return (
+          <Fragment key={index}>
+            <Button
+              variant="empty"
+              className={clsx({
+                [selectedClassNames]: isSelected,
+                [unselectedClassNames]: !isSelected,
+                "text-gray-400 cursor-not-allowed": option.disabled,
+              })}
+              onClick={() => selectOption(option)}
+              {...(option.disabled
+                ? { title: "This type has entries that could be affected" }
+                : {})}
+            >
+              {option.text}
+            </Button>
+            {shouldAddSpacer ? <Spacer className="w-2" /> : null}
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
 
 function EntryTypeBlock({
   entryType,
@@ -48,30 +116,114 @@ function EntryTypeBlock({
     style.zIndex = isBeingDragged ? 999999 : -1;
   }
 
+  const [newName, setNewName] = useState(entryType.name);
+
+  const updateEntryTypeMutation = useUpdateEntryType();
+
+  const handleNameBlur = useCallback(() => {
+    if (newName === "") {
+      setNewName(entryType.name);
+    } else if (newName !== entryType.name) {
+      updateEntryTypeMutation.mutate({
+        id: entryType.id,
+        key: "name",
+        value: newName,
+      });
+    }
+  }, [newName, entryType, updateEntryTypeMutation]);
+
+  const handleNameKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") {
+        event.currentTarget.blur();
+      }
+    },
+    []
+  );
+
+  const updateDataType = useCallback(
+    (value: string) => {
+      updateEntryTypeMutation.mutate({
+        id: entryType.id,
+        key: "dataType",
+        value,
+      });
+    },
+    [updateEntryTypeMutation, entryType]
+  );
+
   return (
     <>
       <div
         ref={setNodeRef}
-        className="flex flex-row p-4 border rounded-lg text-lg bg-white"
+        className="flex flex-row py-2 pr-6 pl-2 border rounded-lg text-lg bg-white"
         style={style}
         {...attributes}
         {...listeners}
       >
         <div className="flex flex-col">
-          <div className="">{entryType.name}</div>
-          <div className="italic">{entryType.dataType}</div>
+          <input
+            type="text"
+            className="text-xl w-96 p-2 border-2 border-dashed"
+            value={newName}
+            onChange={(event) => setNewName(event.target.value)}
+            onBlur={handleNameBlur}
+            onKeyDown={handleNameKeyDown}
+          />
+          <ButtonSelect
+            options={[
+              {
+                value: "boolean",
+                text: "Yes / No",
+                disabled:
+                  entryType.dataType !== "boolean" && entryType.hasEntries,
+              },
+              {
+                value: "time",
+                text: "Time",
+                disabled: entryType.dataType !== "time" && entryType.hasEntries,
+              },
+              {
+                value: "quantity",
+                text: "Quantity",
+                disabled:
+                  entryType.dataType !== "quantity" && entryType.hasEntries,
+              },
+            ]}
+            value={entryType.dataType}
+            onChange={updateDataType}
+          />
         </div>
         <div className="ml-auto flex items-center">
           <EntryTypeIcon
             icon={entryType.icon}
             color={entryType.iconColor}
-            size="lg"
+            size="2x"
           />
         </div>
       </div>
-      <Spacer className="h-2" />
+      <Spacer className="h-4" />
     </>
   );
+}
+
+class EventForgivingMouseSensor extends MouseSensor {
+  static activators = [
+    {
+      eventName: "onMouseDown" as const,
+      handler: (event: MouseEvent) => {
+        const { button } = event;
+        const isRightClick = button === 2;
+
+        if (isRightClick) {
+          return false;
+        }
+
+        // Difference with super class is that this doesn't prevent default events
+        return true;
+      },
+    },
+  ];
 }
 
 function EntryTypeSettings() {
@@ -85,9 +237,18 @@ function EntryTypeSettings() {
   const entryTypesIds = entryTypes.map((entryType) => entryType.id.toString());
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+    useSensor(EventForgivingMouseSensor, {
+      // Require the mouse to move by 10 pixels before activating
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(TouchSensor, {
+      // Press delay of 250ms, with tolerance of 5px of movement
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
     })
   );
 
@@ -106,9 +267,11 @@ function EntryTypeSettings() {
     (event) => {
       const { active, over } = event;
 
-      setDraggingEntryTypeId(null);
+      if (active && over) {
+        setDraggingEntryTypeId(null);
+      }
 
-      if (active.id !== over.id) {
+      if (active && over && active.id !== over.id) {
         const previousQueryData = queryClient.getQueryData<{
           entryTypes: Array<EntryTypeType>;
         }>("entryTypes");

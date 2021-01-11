@@ -1,11 +1,22 @@
 import clsx from "clsx";
-import { CSSProperties, MouseEvent, ReactNode } from "react";
+import {
+  Attributes,
+  ButtonHTMLAttributes,
+  CSSProperties,
+  HTMLAttributes,
+  HtmlHTMLAttributes,
+  MouseEvent,
+  ReactNode,
+} from "react";
 import noop from "lib/noop";
 
 const VARIANT_CLASSES: { [key: string]: string } = {
-  default: "",
-  outstanding: "bg-green-600 text-white",
+  empty: "",
+  default: "border-solid border border-gray-400",
 };
+
+VARIANT_CLASSES.outstanding =
+  VARIANT_CLASSES.default + " bg-green-600 text-white";
 
 type ButtonProps = {
   children: ReactNode;
@@ -14,6 +25,7 @@ type ButtonProps = {
   style?: CSSProperties;
   disabled?: boolean;
   className?: string;
+  title?: string;
 };
 function Button({
   children,
@@ -22,12 +34,20 @@ function Button({
   variant = "default",
   disabled = false,
   className = "",
+  title,
+  ...otherProps
 }: ButtonProps) {
+  const optionalProps: ButtonHTMLAttributes<HTMLButtonElement> = {};
+
+  if (title) {
+    optionalProps.title = title;
+  }
+
   return (
     <button
       type="button"
       className={clsx(
-        "px-2 py-1 rounded-full border-solid border border-gray-400",
+        "px-2 py-1 rounded-full",
         VARIANT_CLASSES[variant] || "",
         { "text-gray-400 cursor-not-allowed": disabled },
         className
@@ -35,6 +55,8 @@ function Button({
       onClick={onClick}
       style={{ outline: "none", ...style }}
       disabled={disabled}
+      {...optionalProps}
+      {...otherProps}
     >
       {children}
     </button>

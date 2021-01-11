@@ -1,7 +1,9 @@
 import fetchApi from "fetchApi";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
 function useUpdateEntryType() {
+  const queryClient = useQueryClient();
+
   return useMutation(
     async (attributes: { id: Number; key: string; value: string | number }) => {
       const { id, key, value } = attributes;
@@ -10,6 +12,11 @@ function useUpdateEntryType() {
         body: { entryType: { [key]: value } },
       });
       return response.json();
+    },
+    {
+      onSettled: () => {
+        queryClient.invalidateQueries("entryTypes");
+      },
     }
   );
 }
