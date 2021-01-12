@@ -4,6 +4,8 @@ import {
   CSSProperties,
   MouseEvent,
   ReactNode,
+  useEffect,
+  useState,
 } from "react";
 import noop from "lib/noop";
 
@@ -40,18 +42,28 @@ function Button({
     optionalProps.title = title;
   }
 
+  const [mouseDown, setMouseDown] = useState(false);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", () => setMouseDown(true));
+    document.addEventListener("keydown", () => setMouseDown(false));
+  }, []);
+
   return (
     <button
       type="button"
       className={clsx(
         "rounded-full",
         VARIANT_CLASSES[variant] || "",
-        { "text-gray-400 cursor-not-allowed": disabled },
+        {
+          "text-gray-400 cursor-not-allowed": disabled,
+          "focus:outline-none": mouseDown,
+        },
         className
       )}
       onClick={onClick}
-      style={{ outline: "none", ...style }}
       disabled={disabled}
+      style={style}
       {...optionalProps}
       {...otherProps}
     >

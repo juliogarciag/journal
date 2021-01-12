@@ -20,6 +20,9 @@ import {
   faCaretDown,
   faChevronDown,
   faClock,
+  faEdit,
+  faPen,
+  faPencilAlt,
   faSortNumericUp,
   faSortNumericUpAlt,
   faToggleOn,
@@ -181,77 +184,46 @@ function EntryTypeBlock({
     <>
       <div
         ref={setNodeRef}
-        className="flex flex-row py-2 pr-6 pl-2 border rounded-lg text-lg bg-white shadow-md"
+        className="flex flex-row py-2 border rounded-lg text-lg bg-white shadow-md"
         style={style}
       >
-        <div
-          className="flex items-center pl-2 pr-4 text-gray-400 hover:text-gray-500 outline-none"
+        <Button
+          variant="empty"
+          className="flex items-center px-4 text-gray-400 hover:text-gray-500"
           style={{ cursor: isBeingDragged ? "grabbing" : "grab" }}
           {...listeners}
           {...attributes}
         >
           <FontAwesomeIcon icon={faBars} className="fill-current" />
-        </div>
-        <div className="flex flex-col">
-          <div className="w-96 p-2 pb-0 flex flex-row">
-            <div className="text-xl">{entryType.name}</div>
-            <div className="pl-2">
+        </Button>
+        <Button variant="empty" className="flex flex-row w-full pr-6">
+          <div className="flex flex-col">
+            <div className="w-96 p-2 pb-0 flex flex-row">
+              <div className="text-xl">{entryType.name}</div>
+              <div className="pl-2">
+                <FontAwesomeIcon
+                  icon={faEdit}
+                  size="xs"
+                  className="fill-current text-gray-700"
+                />{" "}
+              </div>
+            </div>
+            <div className="p-2 text-gray-800 text-sm flex items-center">
               <FontAwesomeIcon
-                icon={faCaretDown}
-                size="xs"
-                className="fill-current text-gray-700"
-              />{" "}
+                icon={dataTypeIcons[entryType.dataType]}
+                className="fill-current"
+              />
+              <span className="pl-2">{dataTypeCopies[entryType.dataType]}</span>{" "}
             </div>
           </div>
-          {/* <input
-            type="text"
-            className="text-xl w-96 p-2 border-2 border-dashed"
-            value={newName}
-            onChange={(event) => setNewName(event.target.value)}
-            onBlur={handleNameBlur}
-            onKeyDown={handleNameKeyDown}
-          /> */}
-          <div className="p-2 text-gray-800 text-sm flex items-center">
-            {/* <span className="text-gray-400">Type:</span>{" "} */}
-            <FontAwesomeIcon
-              icon={dataTypeIcons[entryType.dataType]}
-              className="fill-current"
+          <div className="ml-auto flex flex-col self-center">
+            <EntryTypeIcon
+              icon={entryType.icon}
+              color={entryType.iconColor}
+              size="2x"
             />
-            <span className="pl-2">{dataTypeCopies[entryType.dataType]}</span>{" "}
           </div>
-          {/* <ButtonSelect
-            options={[
-              {
-                value: "boolean",
-                text: "Yes / No",
-                disabled: entryType.hasEntries,
-              },
-              {
-                value: "time",
-                text: "Time",
-                disabled: entryType.hasEntries,
-              },
-              {
-                value: "quantity",
-                text: "Quantity",
-                disabled: entryType.hasEntries,
-              },
-            ]}
-            value={entryType.dataType}
-            onChange={updateDataType}
-          /> */}
-        </div>
-        <div className="ml-auto flex flex-col self-center">
-          <EntryTypeIcon
-            icon={entryType.icon}
-            color={entryType.iconColor}
-            size="2x"
-          />
-          {/* <Spacer className="h-2" />
-          <Button variant="empty" className="text-gray-400 text-sm">
-            Edit
-          </Button> */}
-        </div>
+        </Button>
       </div>
       <Spacer className="h-4" />
     </>

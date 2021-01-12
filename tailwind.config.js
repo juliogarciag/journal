@@ -10,7 +10,10 @@ module.exports = {
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      outline: ["active"],
+      ringWidth: ["active"],
+    },
   },
   plugins: [],
 };
