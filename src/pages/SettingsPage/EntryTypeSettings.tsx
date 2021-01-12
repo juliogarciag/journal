@@ -14,6 +14,17 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import {
+  faBars,
+  faCaretDown,
+  faChevronDown,
+  faClock,
+  faSortNumericUp,
+  faSortNumericUpAlt,
+  faToggleOn,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import Button from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
@@ -29,6 +40,7 @@ import {
   useState,
 } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
 import { EntryTypeType } from "types";
 import useUpdateEntryType from "./useUpdateEntryType";
 
@@ -91,6 +103,18 @@ function ButtonSelect({ options, value, onChange }: ButtonSelectProps) {
     </div>
   );
 }
+
+const dataTypeCopies: { [key: string]: string } = {
+  boolean: "Yes / No",
+  time: "Time",
+  quantity: "Quantity",
+};
+
+const dataTypeIcons: { [key: string]: IconProp } = {
+  boolean: faToggleOn,
+  time: faClock,
+  quantity: faSortNumericUpAlt,
+};
 
 function EntryTypeBlock({
   entryType,
@@ -157,21 +181,45 @@ function EntryTypeBlock({
     <>
       <div
         ref={setNodeRef}
-        className="flex flex-row py-2 pr-6 pl-2 border rounded-lg text-lg bg-white"
+        className="flex flex-row py-2 pr-6 pl-2 border rounded-lg text-lg bg-white shadow-md"
         style={style}
-        {...attributes}
-        {...listeners}
       >
+        <div
+          className="flex items-center pl-2 pr-4 text-gray-400 hover:text-gray-500 outline-none"
+          style={{ cursor: isBeingDragged ? "grabbing" : "grab" }}
+          {...listeners}
+          {...attributes}
+        >
+          <FontAwesomeIcon icon={faBars} className="fill-current" />
+        </div>
         <div className="flex flex-col">
-          <input
+          <div className="w-96 p-2 pb-0 flex flex-row">
+            <div className="text-xl">{entryType.name}</div>
+            <div className="pl-2">
+              <FontAwesomeIcon
+                icon={faCaretDown}
+                size="xs"
+                className="fill-current text-gray-700"
+              />{" "}
+            </div>
+          </div>
+          {/* <input
             type="text"
             className="text-xl w-96 p-2 border-2 border-dashed"
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
             onBlur={handleNameBlur}
             onKeyDown={handleNameKeyDown}
-          />
-          <ButtonSelect
+          /> */}
+          <div className="p-2 text-gray-800 text-sm flex items-center">
+            {/* <span className="text-gray-400">Type:</span>{" "} */}
+            <FontAwesomeIcon
+              icon={dataTypeIcons[entryType.dataType]}
+              className="fill-current"
+            />
+            <span className="pl-2">{dataTypeCopies[entryType.dataType]}</span>{" "}
+          </div>
+          {/* <ButtonSelect
             options={[
               {
                 value: "boolean",
@@ -191,14 +239,18 @@ function EntryTypeBlock({
             ]}
             value={entryType.dataType}
             onChange={updateDataType}
-          />
+          /> */}
         </div>
-        <div className="ml-auto flex items-center">
+        <div className="ml-auto flex flex-col self-center">
           <EntryTypeIcon
             icon={entryType.icon}
             color={entryType.iconColor}
             size="2x"
           />
+          {/* <Spacer className="h-2" />
+          <Button variant="empty" className="text-gray-400 text-sm">
+            Edit
+          </Button> */}
         </div>
       </div>
       <Spacer className="h-4" />

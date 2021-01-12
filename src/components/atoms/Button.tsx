@@ -9,7 +9,7 @@ import noop from "lib/noop";
 
 const VARIANT_CLASSES: { [key: string]: string } = {
   empty: "",
-  default: "border-solid border border-gray-400",
+  default: "px-2 py-1 border-solid border border-gray-400",
 };
 
 VARIANT_CLASSES.outstanding =
@@ -44,7 +44,7 @@ function Button({
     <button
       type="button"
       className={clsx(
-        "px-2 py-1 rounded-full",
+        "rounded-full",
         VARIANT_CLASSES[variant] || "",
         { "text-gray-400 cursor-not-allowed": disabled },
         className
