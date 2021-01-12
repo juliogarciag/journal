@@ -7,6 +7,7 @@ export type EntryTypeType = {
   iconColor: string;
   dataType: string;
   hasEntries: boolean;
+  rowOrderPosition: number;
 };
 
 export type EntryType = {

@@ -4,6 +4,7 @@ import {
   CSSProperties,
   MouseEvent,
   ReactNode,
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -20,6 +21,7 @@ VARIANT_CLASSES.outstanding =
 type ButtonProps = {
   children: ReactNode;
   variant?: string;
+  type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   disabled?: boolean;
@@ -29,6 +31,7 @@ type ButtonProps = {
 function Button({
   children,
   onClick = noop,
+  type = "button",
   style = {},
   variant = "default",
   disabled = false,
@@ -44,14 +47,22 @@ function Button({
 
   const [mouseDown, setMouseDown] = useState(false);
 
+  const notifyMouseDown = useCallback(() => setMouseDown(true), []);
+  const notifyNotMouseDown = useCallback(() => setMouseDown(false), []);
+
   useEffect(() => {
-    document.addEventListener("mousedown", () => setMouseDown(true));
-    document.addEventListener("keydown", () => setMouseDown(false));
-  }, []);
+    document.addEventListener("mousedown", notifyMouseDown);
+    document.addEventListener("keydown", notifyNotMouseDown);
+
+    return () => {
+      document.removeEventListener("mousedown", notifyMouseDown);
+      document.removeEventListener("keydown", notifyNotMouseDown);
+    };
+  }, [notifyMouseDown, notifyNotMouseDown]);
 
   return (
     <button
-      type="button"
+      type={type}
       className={clsx(
         "rounded-full",
         VARIANT_CLASSES[variant] || "",
