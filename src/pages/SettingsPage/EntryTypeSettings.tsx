@@ -2,6 +2,7 @@ import {
   closestCenter,
   DndContext,
   DragStartEvent,
+  KeyboardSensor,
   MouseSensor,
   TouchSensor,
   useSensor,
@@ -10,6 +11,7 @@ import {
 import {
   arrayMove,
   SortableContext,
+  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -272,6 +274,9 @@ function EntryTypeSettings() {
         delay: 250,
         tolerance: 5,
       },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
