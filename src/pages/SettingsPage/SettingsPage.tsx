@@ -10,6 +10,7 @@ function SettingsPageWrapper() {
           <h1 className="text-2xl text-center">Entry Types</h1>
           <Spacer className="h-12" />
           <EntryTypeSettings />
+          <Spacer className="h-24" />
         </div>
       </div>
     </Suspense>

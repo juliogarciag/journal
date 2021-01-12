@@ -32,9 +32,11 @@ function NavbarLink({ to, text, icon }: NavbarLinkProps) {
 function Navbar() {
   return (
     <>
-      <div className="sticky p-8 flex justify-around w-96 m-auto border-b">
-        <NavbarLink to="/" text="Home" icon={faHome} />
-        <NavbarLink to="/settings" text="Home" icon={faCog} />
+      <div className="sticky top-0 bg-white z-50">
+        <div className="p-8 flex justify-around w-96 m-auto border-b">
+          <NavbarLink to="/" text="Home" icon={faHome} />
+          <NavbarLink to="/settings" text="Home" icon={faCog} />
+        </div>
       </div>
       <Spacer className="h-8" />
     </>
