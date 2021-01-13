@@ -7,8 +7,6 @@ function SettingsPageWrapper() {
     <Suspense fallback={<div className="text-center">Loading...</div>}>
       <div className="flex justify-center">
         <div className="w-124 pt-8">
-          <h1 className="text-2xl text-center">Entry Types</h1>
-          <Spacer className="h-12" />
           <EntryTypeSettings />
           <Spacer className="h-24" />
         </div>

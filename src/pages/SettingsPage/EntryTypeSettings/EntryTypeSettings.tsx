@@ -14,11 +14,14 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import Button from "components/atoms/Button";
+import Spacer from "components/atoms/Spacer";
 import fetchApi from "fetchApi";
 import { MouseEvent, useCallback, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { EntryTypeType } from "types";
 import EntryTypeBlock from "./EntryTypeBlock";
+import NewEntryTypeForm from "./NewEntryTypeForm";
 import useUpdateEntryType from "./useUpdateEntryType";
 
 class EventForgivingMouseSensor extends MouseSensor {
@@ -77,6 +80,11 @@ function EntryTypeSettings() {
     setDraggingEntryTypeId(Number(event.active.id));
   }, []);
 
+  const [showCreationForm, setShowCreationForm] = useState(false);
+
+  const displayCreationForm = useCallback(() => setShowCreationForm(true), []);
+  const hideCreationForm = useCallback(() => setShowCreationForm(false), []);
+
   const updateEntryTypeMutation = useUpdateEntryType({
     bypassOptimisticUpdate: true,
   });
@@ -131,29 +139,50 @@ function EntryTypeSettings() {
   );
 
   return (
-    <div>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={entryTypesIds}
-          strategy={verticalListSortingStrategy}
+    <>
+      <div className="flex">
+        <h1 className="text-2xl">Entry Types</h1>
+        {showCreationForm ? null : (
+          <Button
+            variant="outstanding"
+            className="ml-auto px-2"
+            onClick={displayCreationForm}
+          >
+            Create new type
+          </Button>
+        )}
+      </div>
+      {showCreationForm ? (
+        <>
+          <Spacer className="h-6" />
+          <NewEntryTypeForm onCancel={hideCreationForm} />
+        </>
+      ) : null}
+      <Spacer className="h-12" />
+      <div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
         >
-          {entryTypes.map((entryType: EntryTypeType) => {
-            return (
-              <EntryTypeBlock
-                key={entryType.id}
-                entryType={entryType}
-                isBeingDragged={entryType.id === draggingEntryTypeId}
-              />
-            );
-          })}
-        </SortableContext>
-      </DndContext>
-    </div>
+          <SortableContext
+            items={entryTypesIds}
+            strategy={verticalListSortingStrategy}
+          >
+            {entryTypes.map((entryType: EntryTypeType) => {
+              return (
+                <EntryTypeBlock
+                  key={entryType.id}
+                  entryType={entryType}
+                  isBeingDragged={entryType.id === draggingEntryTypeId}
+                />
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
+    </>
   );
 }
 

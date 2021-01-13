@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_11_004219) do
+ActiveRecord::Schema.define(version: 2021_01_13_045506) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2021_01_11_004219) do
     t.string "icon"
     t.string "icon_color"
     t.integer "entries_count", default: 0, null: false
+    t.boolean "can_be_deleted", default: true
     t.index ["name"], name: "index_entry_types_on_name", unique: true
     t.index ["row_order"], name: "index_entry_types_on_row_order", unique: true
   end

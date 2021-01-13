@@ -14,11 +14,33 @@ class EntryTypesController < ApplicationController
     render json: { entry_type: EntryTypeSerializer.new(entry_type).serialize }
   end
 
+  def create
+    entry_type = EntryType.create!(create_params.merge(row_order_position: 0))
+    render json: { entry_type: EntryTypeSerializer.new(entry_type).serialize }
+  end
+
+  def destroy
+    entry_type = EntryType.find(params[:id])
+    entry_type.destroy!
+    render json: { deleted: true }
+  end
+
+  def can_be_deleted
+    entry_type = EntryType.find(params[:id])
+    render json: { can_be_deleted: entry_type.can_be_deleted? }
+  end
+
   private
 
   def update_params
     @update_params ||= params.require(:entry_type).permit(
       :name, :icon, :icon_color, :data_type, :row_order_position
+    )
+  end
+
+  def create_params
+    @create_params ||= params.require(:entry_type).permit(
+      :name, :icon, :icon_color, :data_type
     )
   end
 end

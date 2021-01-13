@@ -19,6 +19,7 @@ const allowedIcons: { [key: string]: FontAwesomeIconProps["icon"] } = {
   "smile-beam": faSmileBeam,
   pastafarianism: faPastafarianism,
   moon: faMoon,
+  unknown: faQuestionCircle,
 };
 
 type EntryTypeIconProps = {
