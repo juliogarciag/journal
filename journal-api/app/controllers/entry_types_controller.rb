@@ -34,13 +34,13 @@ class EntryTypesController < ApplicationController
 
   def update_params
     @update_params ||= params.require(:entry_type).permit(
-      :name, :icon, :icon_color, :data_type, :row_order_position
+      :name, :icon, :data_type, :row_order_position
     )
   end
 
   def create_params
     @create_params ||= params.require(:entry_type).permit(
-      :name, :icon, :icon_color, :data_type
+      :name, :icon, :data_type
     )
   end
 end

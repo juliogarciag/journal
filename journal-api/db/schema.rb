@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_13_045506) do
+ActiveRecord::Schema.define(version: 2021_01_15_143909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,8 +33,7 @@ ActiveRecord::Schema.define(version: 2021_01_13_045506) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "row_order"
-    t.string "icon"
-    t.string "icon_color"
+    t.string "icon", default: "unknown", null: false
     t.integer "entries_count", default: 0, null: false
     t.boolean "can_be_deleted", default: true
     t.index ["name"], name: "index_entry_types_on_name", unique: true

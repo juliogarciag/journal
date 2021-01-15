@@ -5,12 +5,7 @@ function useCreateNewEntryType() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (values: {
-      name: string;
-      dataType: string;
-      icon: string;
-      iconColor: string;
-    }) => {
+    async (values: { name: string; dataType: string; icon: string }) => {
       const response = await fetchApi(`/entry_types`, {
         method: "POST",
         body: {

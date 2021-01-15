@@ -16,7 +16,7 @@ import QuantityInput from "./QuantityInput";
 import useDailyEntries, { getQueryKey } from "./useDailyEntries";
 import fetchApi from "fetchApi";
 import Button from "components/atoms/Button";
-import { EntryType, EntryValueType } from "types";
+import { EntryType, EntryTypeIconType, EntryValueType } from "types";
 import EntryTypeIcon from "components/EntryTypeIcon/EntryTypeIcon";
 
 type EntriesQueryData = {
@@ -24,22 +24,16 @@ type EntriesQueryData = {
 };
 
 type DailyActivityProps = {
-  icon: string;
+  icon: EntryTypeIconType;
   title: string;
-  iconColor: string;
   children: ReactNode;
 };
-function DailyActivity({
-  icon,
-  iconColor,
-  title,
-  children,
-}: DailyActivityProps) {
+function DailyActivity({ icon, title, children }: DailyActivityProps) {
   return (
     <div className="flex items-center pb-4">
       <div className="font-semibold w-64">
         <span className="pr-2">
-          <EntryTypeIcon icon={icon} color={iconColor} />
+          <EntryTypeIcon icon={icon} />
         </span>
         <span>{title}</span>
       </div>
@@ -119,14 +113,9 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
     <form className="text-left pt-4">
       {entries.map((entry) => {
         const { id, value, entryType } = entry;
-        const { icon, iconColor, name, dataType } = entryType;
+        const { icon, name, dataType } = entryType;
         return (
-          <DailyActivity
-            key={id}
-            icon={icon}
-            iconColor={iconColor}
-            title={name}
-          >
+          <DailyActivity key={id} icon={icon} title={name}>
             {dataType === "time" ? (
               <TimeInput
                 value={(value as string) || ""}

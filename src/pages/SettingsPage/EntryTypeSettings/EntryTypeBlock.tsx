@@ -141,11 +141,7 @@ function EntryTypeBlock({
               </div>
             </div>
             <div className="ml-auto flex flex-col self-center">
-              <EntryTypeIcon
-                icon={entryType.icon}
-                color={entryType.iconColor}
-                size="2x"
-              />
+              <EntryTypeIcon icon={entryType.icon} size="2x" />
             </div>
           </Button>
         </div>
