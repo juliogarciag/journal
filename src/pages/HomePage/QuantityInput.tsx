@@ -1,4 +1,4 @@
-import Button from "components/atoms/Button";
+import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import { useCallback } from "react";
 
@@ -16,13 +16,19 @@ function QuantityInput({ value, onChange }: QuantityInputProps) {
 
   return (
     <>
-      <Button onClick={handleDownClick} disabled={value <= 0}>
+      <Button
+        variant={VariantType.Solid}
+        onClick={handleDownClick}
+        disabled={value <= 0}
+      >
         ↓
       </Button>
       <Spacer className="w-1" />
       <code className="p-1">{value}</code>
       <Spacer className="w-1" />
-      <Button onClick={handleUpClick}>↑</Button>
+      <Button variant={VariantType.Solid} onClick={handleUpClick}>
+        ↑
+      </Button>
     </>
   );
 }

@@ -14,7 +14,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import Button from "components/atoms/Button";
+import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import fetchApi from "fetchApi";
 import { MouseEvent, useCallback, useState } from "react";
@@ -144,7 +144,7 @@ function EntryTypeSettings() {
         <h1 className="text-2xl">Entry Types</h1>
         {showCreationForm ? null : (
           <Button
-            variant="outstanding"
+            variant={VariantType.Outstanding}
             className="ml-auto px-2"
             onClick={displayCreationForm}
           >

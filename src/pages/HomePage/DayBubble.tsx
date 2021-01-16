@@ -15,7 +15,7 @@ import BooleanInput from "./BooleanInput";
 import QuantityInput from "./QuantityInput";
 import useDailyEntries, { getQueryKey } from "./useDailyEntries";
 import fetchApi from "fetchApi";
-import Button from "components/atoms/Button";
+import Button, { VariantType } from "components/atoms/Button";
 import { EntryType, EntryTypeIconType, EntryValueType } from "types";
 import EntryTypeIcon from "components/EntryTypeIcon/EntryTypeIcon";
 
@@ -209,7 +209,11 @@ function DayBubbleWrapper(props: DayBubbleWrapperProps) {
         key={props.day.toISODate()}
         daySlotRef={currentDaySlotRef}
       />
-      <Button className="absolute right-8 px-4" onClick={props.closeDaySlot}>
+      <Button
+        variant={VariantType.Solid}
+        className="absolute right-8 px-4"
+        onClick={props.closeDaySlot}
+      >
         close
       </Button>
       <h3 className="text-2xl pb-4 text-left">

@@ -105,7 +105,6 @@ function EntryTypeBlock({
       >
         <div className="flex flex-row text-lg">
           <Button
-            variant="empty"
             className="flex items-center px-4 text-gray-400 hover:text-gray-500"
             style={{ cursor: isBeingDragged ? "grabbing" : "grab" }}
             {...listeners}
@@ -114,7 +113,6 @@ function EntryTypeBlock({
             <FontAwesomeIcon icon={faBars} className="fill-current" />
           </Button>
           <Button
-            variant="empty"
             className="flex flex-row w-full pr-6 py-2"
             title="Edit Type"
             onClick={goIntoEditMode}

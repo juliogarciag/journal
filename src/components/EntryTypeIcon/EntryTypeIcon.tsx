@@ -12,6 +12,7 @@ import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
 import { EntryTypeIconType } from "types";
 
 const allowedIcons: Record<EntryTypeIconType, IconDefinition> = {
@@ -27,12 +28,18 @@ const allowedIcons: Record<EntryTypeIconType, IconDefinition> = {
 type EntryTypeIconProps = {
   icon: EntryTypeIconType;
   size?: FontAwesomeIconProps["size"];
+  className?: string;
 };
-function EntryTypeIcon({ icon, size = "1x" }: EntryTypeIconProps) {
+function EntryTypeIcon({
+  icon,
+  size = "1x",
+  className = "",
+}: EntryTypeIconProps) {
   return (
     <FontAwesomeIcon
       icon={allowedIcons[icon] || faQuestionCircle}
       size={size}
+      className={clsx("fill-current", className)}
     />
   );
 }

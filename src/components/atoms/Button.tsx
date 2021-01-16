@@ -10,17 +10,26 @@ import {
 } from "react";
 import noop from "lib/noop";
 
-const VARIANT_CLASSES: { [key: string]: string } = {
-  empty: "",
-  default: "px-2 py-1 border-solid border border-gray-400",
+export enum VariantType {
+  Empty = "empty",
+  Solid = "solid",
+  Outstanding = "outstanding",
+}
+
+const VARIANT_CLASSES: Partial<Record<VariantType, string>> = {
+  [VariantType.Empty]: "",
+  [VariantType.Solid]:
+    "rounded-full px-2 py-1 border-solid border border-gray-400",
 };
 
-VARIANT_CLASSES.outstanding =
-  VARIANT_CLASSES.default + " bg-green-600 text-white";
+VARIANT_CLASSES[VariantType.Outstanding] = clsx(
+  VARIANT_CLASSES[VariantType.Solid],
+  "bg-green-600 text-white"
+);
 
 type ButtonProps = {
   children: ReactNode;
-  variant?: string;
+  variant?: VariantType;
   type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
@@ -33,7 +42,7 @@ function Button({
   onClick = noop,
   type = "button",
   style = {},
-  variant = "default",
+  variant = VariantType.Empty,
   disabled = false,
   className = "",
   title,
@@ -64,7 +73,6 @@ function Button({
     <button
       type={type}
       className={clsx(
-        "rounded-full",
         VARIANT_CLASSES[variant] || "",
         {
           "text-gray-400 cursor-not-allowed": disabled,

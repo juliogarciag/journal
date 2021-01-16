@@ -1,4 +1,3 @@
-import { faObjectUngroup } from "@fortawesome/free-solid-svg-icons";
 import Button from "components/atoms/Button";
 import fetchApi from "fetchApi";
 import { ReactNode, Suspense, useCallback } from "react";
@@ -39,8 +38,7 @@ function EntryTypeDeletionBlock({ entryType }: { entryType: EntryTypeType }) {
           <p>Do you want to delete this type?</p>
           <div className="ml-auto">
             <Button
-              variant="empty"
-              className="bg-red-400 hover:bg-red-600 px-4 py-1"
+              className="bg-red-400 hover:bg-red-600 px-4 py-1 rounded-full"
               onClick={deleteEntryType}
             >
               Delete

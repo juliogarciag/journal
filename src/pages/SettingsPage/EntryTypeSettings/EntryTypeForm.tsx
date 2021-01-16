@@ -1,7 +1,7 @@
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
-import Button from "components/atoms/Button";
+import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import EntryTypeIcon from "components/EntryTypeIcon";
 import { Fragment, useCallback, useState } from "react";
@@ -18,8 +18,7 @@ function IconSelect({ value, onChange, className = "" }: IconSelectProps) {
       {Object.values(EntryTypeIconType).map((icon) => {
         return (
           <Fragment key={icon}>
-            <button
-              type="button"
+            <Button
               aria-label={`${icon} icon`}
               title={`${icon} icon`}
               className={clsx("border-2 py-1 px-1.5 rounded", {
@@ -28,7 +27,7 @@ function IconSelect({ value, onChange, className = "" }: IconSelectProps) {
               onClick={() => onChange(icon)}
             >
               <EntryTypeIcon icon={icon} />
-            </button>
+            </Button>
             <Spacer className="w-3" />
           </Fragment>
         );
@@ -95,26 +94,27 @@ function EntryTypeForm({ onCancel, entryType, save }: EntryTypeFormProps) {
           </div>
         </label>
         <Spacer className="h-4" />
-        <label className="flex items-center">
-          <span className="w-24">Icon </span>
+        <div className="flex items-center">
+          <label className="w-24">Icon </label>
           <IconSelect
             value={icon}
             onChange={setIcon}
             className="border border-transparent rounded px-0.5 py-1 w-96"
           />
-        </label>
+        </div>
       </div>
       <div className="flex border-t pt-4">
         <Button
           type="submit"
-          className="bg-green-600 text-white border-green-600 px-4 py-1"
+          variant={VariantType.Solid}
+          className="bg-green-600 text-white border-green-600 px-4 py-1 rounded-full"
         >
           Save
         </Button>
         <Spacer className="w-2" />
         <Button
-          type="button"
-          className="bg-white text-gray-800 px-4 py-1"
+          variant={VariantType.Solid}
+          className="bg-white text-gray-800 px-4 py-1 rounded-full"
           onClick={onCancel}
         >
           Cancel

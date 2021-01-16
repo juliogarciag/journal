@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import Button from "components/atoms/Button";
+import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 
 type BooleanInputProps = {
@@ -23,19 +23,18 @@ function BooleanInput({ value, onChange }: BooleanInputProps) {
     }
   }, [value, onChange]);
 
+  const trueVariant =
+    value === true ? VariantType.Outstanding : VariantType.Solid;
+  const falseVariant =
+    value === false ? VariantType.Outstanding : VariantType.Solid;
+
   return (
     <>
-      <Button
-        onClick={handleYesClick}
-        variant={value === true ? "outstanding" : "default"}
-      >
+      <Button onClick={handleYesClick} variant={trueVariant}>
         Yes 👌
       </Button>
       <Spacer className="w-2" />
-      <Button
-        onClick={handleNoClick}
-        variant={value === false ? "outstanding" : "default"}
-      >
+      <Button onClick={handleNoClick} variant={falseVariant}>
         No 🙈
       </Button>
     </>
