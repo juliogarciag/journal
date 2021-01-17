@@ -16,7 +16,7 @@ function MetricNumber({ metric }: { metric: MetricType }) {
     metric.proportionData
   ) {
     const { totalCount, yesCount } = metric.proportionData;
-    const percentage = (yesCount / totalCount) * 100;
+    const percentage = totalCount > 0 ? (yesCount / totalCount) * 100 : 0;
 
     return (
       <span className="pl-2 text-3xl flex items-center">

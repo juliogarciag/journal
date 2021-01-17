@@ -11,7 +11,7 @@ class MetricsController < ApplicationController
 
       if template.proportion_metric_type?
         entry_type_entries = year_entries.where(entry_type_id: entry_type_id)
-        total_count = entry_type_entries.where("day <= :today", today: today).count
+        total_count = (today - today.beginning_of_year).to_i + 1
         yes_count = entry_type_entries.where(boolean_value: true).count
 
         {
@@ -21,15 +21,16 @@ class MetricsController < ApplicationController
           proportion_data: { yes_count: yes_count, total_count: total_count }
         }
       elsif template.average_metric_type?
-        average = year_entries.where(entry_type_id: entry_type_id)
+        sum = year_entries.where(entry_type_id: entry_type_id)
                     .where("day <= :today", today: today)
-                    .average(:quantity_value)
+                    .sum(:quantity_value)
+        total_count = (today - today.beginning_of_year).to_i + 1
 
         {
           id: template.id,
           metric_type: template.metric_type,
           entry_type: EntryTypeSerializer.new(template.entry_type).serialize,
-          average_data: { average: average }
+          average_data: { average: sum / total_count }
         }
       end
     end
