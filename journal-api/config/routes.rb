@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   end
 
   get "/daily-entries/:date" => "daily_entries#show"
+  get "/metrics" => "metrics#index"
 end

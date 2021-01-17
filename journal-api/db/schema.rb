@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_15_143909) do
+ActiveRecord::Schema.define(version: 2021_01_16_215859) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,5 +40,14 @@ ActiveRecord::Schema.define(version: 2021_01_15_143909) do
     t.index ["row_order"], name: "index_entry_types_on_row_order", unique: true
   end
 
+  create_table "metric_templates", force: :cascade do |t|
+    t.integer "metric_type", null: false
+    t.bigint "entry_type_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entry_type_id"], name: "index_metric_templates_on_entry_type_id"
+  end
+
   add_foreign_key "entries", "entry_types"
+  add_foreign_key "metric_templates", "entry_types"
 end

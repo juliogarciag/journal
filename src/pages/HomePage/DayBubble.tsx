@@ -18,6 +18,7 @@ import fetchApi from "fetchApi";
 import Button, { VariantType } from "components/atoms/Button";
 import { EntryType, EntryTypeIconType, EntryValueType } from "types";
 import EntryTypeIcon from "components/EntryTypeIcon/EntryTypeIcon";
+import useToday from "lib/useToday";
 
 type EntriesQueryData = {
   entries: Array<EntryType>;
@@ -45,6 +46,7 @@ function DailyActivity({ icon, title, children }: DailyActivityProps) {
 function useUpdateEntry(day: DateTime) {
   const queryClient = useQueryClient();
   const dailyEntriesQueryKey = getQueryKey(day);
+  const today = useToday();
 
   return useMutation(
     async (values: {
@@ -91,7 +93,10 @@ function useUpdateEntry(day: DateTime) {
         }
       },
       onSettled: () => {
+        const metricsQueryKey = ["yearMetrics", today.year];
+
         queryClient.invalidateQueries(dailyEntriesQueryKey);
+        queryClient.invalidateQueries(metricsQueryKey);
       },
     }
   );

@@ -24,3 +24,21 @@ export type EntryType = {
   value: EntryValueType;
   entryType: EntryTypeType;
 };
+
+export enum MetricTypeType {
+  Proportion = "proportion",
+  Average = "average",
+}
+
+export type MetricType = {
+  id: number;
+  metricType: MetricTypeType;
+  entryType: EntryTypeType;
+  proportionData?: {
+    yesCount: number;
+    totalCount: number;
+  };
+  averageData?: {
+    average: number;
+  };
+};
