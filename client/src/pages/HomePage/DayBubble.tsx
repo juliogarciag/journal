@@ -16,12 +16,12 @@ import QuantityInput from "./QuantityInput";
 import useDailyEntries, { getQueryKey } from "./useDailyEntries";
 import fetchApi from "fetchApi";
 import Button, { VariantType } from "components/atoms/Button";
-import { EntryType, EntryTypeIconType, EntryValueType } from "types";
+import { Entry, EntryTypeIconType, EntryValue } from "types";
 import EntryTypeIcon from "components/EntryTypeIcon/EntryTypeIcon";
 import useToday from "lib/useToday";
 
 type EntriesQueryData = {
-  entries: Array<EntryType>;
+  entries: Array<Entry>;
 };
 
 type DailyActivityProps = {
@@ -50,7 +50,7 @@ function useUpdateEntry(day: DateTime) {
 
   return useMutation(
     async (values: {
-      entry: EntryType;
+      entry: Entry;
       value: string | boolean | number | null;
     }) => {
       const { entry, value } = values;
@@ -61,7 +61,7 @@ function useUpdateEntry(day: DateTime) {
       });
     },
     {
-      onMutate: async (values: { entry: EntryType; value: EntryValueType }) => {
+      onMutate: async (values: { entry: Entry; value: EntryValue }) => {
         const { entry, value } = values;
 
         await queryClient.cancelQueries(dailyEntriesQueryKey);
@@ -108,7 +108,7 @@ type DayBubbleProps = {
 };
 function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
   const { data } = useDailyEntries(day);
-  const entries: Array<EntryType> = data.entries;
+  const entries: Array<Entry> = data.entries;
 
   useGlobalKeyHandler("Escape", closeDaySlot);
 
@@ -121,7 +121,7 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
         const { icon, name, dataType } = entryType;
         return (
           <DailyActivity key={id} icon={icon} title={name}>
-            {dataType === "time" ? (
+            {dataType === "TIME" ? (
               <TimeInput
                 value={(value as string) || ""}
                 onChange={(value) => {
@@ -129,7 +129,7 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
                 }}
               />
             ) : null}
-            {dataType === "boolean" ? (
+            {dataType === "BOOLEAN" ? (
               <BooleanInput
                 value={value as boolean | null}
                 onChange={(value) => {
@@ -137,7 +137,7 @@ function DayBubble({ day, closeDaySlot }: DayBubbleProps) {
                 }}
               />
             ) : null}
-            {dataType === "quantity" ? (
+            {dataType === "QUANTITY" ? (
               <QuantityInput
                 value={(value as number) || 0}
                 onChange={(value) => {

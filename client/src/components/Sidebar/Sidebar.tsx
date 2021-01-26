@@ -8,13 +8,10 @@ import useToday from "lib/useToday";
 import { Suspense, useCallback } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { MetricType, MetricTypeType } from "types";
+import { Metric, MetricType } from "types";
 
-function MetricNumber({ metric }: { metric: MetricType }) {
-  if (
-    metric.metricType === MetricTypeType.Proportion &&
-    metric.proportionData
-  ) {
+function MetricNumber({ metric }: { metric: Metric }) {
+  if (metric.metricType === MetricType.PROPORTION && metric.proportionData) {
     const { totalCount, yesCount } = metric.proportionData;
     const percentage = totalCount > 0 ? (yesCount / totalCount) * 100 : 0;
 
@@ -24,10 +21,7 @@ function MetricNumber({ metric }: { metric: MetricType }) {
         <span className="text-xl pl-2">%</span>
       </span>
     );
-  } else if (
-    metric.metricType === MetricTypeType.Average &&
-    metric.averageData
-  ) {
+  } else if (metric.metricType === MetricType.AVERAGE && metric.averageData) {
     const { average } = metric.averageData;
     return (
       <span className="pl-2 text-3xl flex items-center">
@@ -40,11 +34,8 @@ function MetricNumber({ metric }: { metric: MetricType }) {
   }
 }
 
-function MetricSubText({ metric }: { metric: MetricType }) {
-  if (
-    metric.metricType === MetricTypeType.Proportion &&
-    metric.proportionData
-  ) {
+function MetricSubText({ metric }: { metric: Metric }) {
+  if (metric.metricType === MetricType.PROPORTION && metric.proportionData) {
     const { totalCount, yesCount } = metric.proportionData;
 
     return (
@@ -52,7 +43,7 @@ function MetricSubText({ metric }: { metric: MetricType }) {
         {yesCount} days out of {totalCount}
       </div>
     );
-  } else if (metric.metricType === MetricTypeType.Average) {
+  } else if (metric.metricType === MetricType.AVERAGE) {
     return <div className="text-center text-sm pt-1">is the daily average</div>;
   } else {
     return null;
@@ -74,7 +65,7 @@ function YearMetrics({ year }: { year: number }) {
 
   const { data } = useQuery(["yearMetrics", year], fetchYearMetrics);
 
-  const metrics: Array<MetricType> = data.metrics;
+  const metrics: Array<Metric> = data.metrics;
 
   return (
     <div
@@ -112,7 +103,7 @@ function Sidebar() {
       <Spacer className="h-4" />
       <div className="bg-gray-300 p-2 rounded-xl">
         <Suspense fallback={<span>Loading...</span>}>
-          <YearMetrics year={2021} />
+          {/* <YearMetrics year={2021} /> */}
         </Suspense>
       </div>
       <Spacer className="h-6" />

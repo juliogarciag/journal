@@ -1,17 +1,17 @@
 import fetchApi from "fetchApi";
 import produce from "immer";
 import { useMutation, useQueryClient } from "react-query";
-import { EntryTypeType } from "types";
+import { EntryType } from "types";
 
 type EntryTypesQueryData = {
-  entryTypes: Array<EntryTypeType>;
+  entryTypes: Array<EntryType>;
 };
 
 function useUpdateEntryType({ bypassOptimisticUpdate = false } = {}) {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (values: { id: Number; attributes: Partial<EntryTypeType> }) => {
+    async (values: { id: Number; attributes: Partial<EntryType> }) => {
       const { id, attributes } = values;
       const response = await fetchApi(`/entry_types/${id}`, {
         method: "PATCH",
@@ -20,10 +20,7 @@ function useUpdateEntryType({ bypassOptimisticUpdate = false } = {}) {
       return response.json();
     },
     {
-      onMutate: (values: {
-        id: Number;
-        attributes: Partial<EntryTypeType>;
-      }) => {
+      onMutate: (values: { id: Number; attributes: Partial<EntryType> }) => {
         if (bypassOptimisticUpdate) {
           return;
         }

@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model EntryType {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  dataType        EntryDataType
+  name            String
+  rowOrder        Int              @unique
+  icon            String
+  entries         Entry[]
+  metricTemplates MetricTemplate[]
+}
+
+model Entry {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  day           DateTime
+  booleanValue  Boolean?
+  timeValue     String?
+  quantityValue Int?
+  entryType     EntryType @relation(fields: [entryTypeId], references: [id])
+  entryTypeId   Int
+
+  @@unique([day, entryTypeId])
+}
+
+model MetricTemplate {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  metricType  MetricType
+  entryType   EntryType  @relation(fields: [entryTypeId], references: [id])
+  entryTypeId Int
+}
+
+enum EntryDataType {
+  BOOLEAN
+  TIME
+  QUANTITY
+}
+
+enum MetricType {
+  PROPORTION
+  AVERAGE
+}

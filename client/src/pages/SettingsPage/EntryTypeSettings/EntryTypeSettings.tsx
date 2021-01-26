@@ -19,7 +19,7 @@ import Spacer from "components/atoms/Spacer";
 import fetchApi from "fetchApi";
 import { MouseEvent, useCallback, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { EntryTypeType } from "types";
+import { EntryType } from "types";
 import EntryTypeBlock from "./EntryTypeBlock";
 import NewEntryTypeForm from "./NewEntryTypeForm";
 import useUpdateEntryType from "./useUpdateEntryType";
@@ -50,7 +50,7 @@ function EntryTypeSettings() {
   }, []);
 
   const { data } = useQuery("entryTypes", fetchEntryTypes);
-  const entryTypes: Array<EntryTypeType> = data.entryTypes;
+  const entryTypes: Array<EntryType> = data.entryTypes;
   const entryTypesIds = entryTypes.map((entryType) => entryType.id.toString());
 
   const sensors = useSensors(
@@ -100,7 +100,7 @@ function EntryTypeSettings() {
 
       if (active && over && active.id !== over.id) {
         const previousQueryData = queryClient.getQueryData<{
-          entryTypes: Array<EntryTypeType>;
+          entryTypes: Array<EntryType>;
         }>("entryTypes");
 
         if (previousQueryData) {
@@ -170,7 +170,7 @@ function EntryTypeSettings() {
             items={entryTypesIds}
             strategy={verticalListSortingStrategy}
           >
-            {entryTypes.map((entryType: EntryTypeType) => {
+            {entryTypes.map((entryType: EntryType) => {
               return (
                 <EntryTypeBlock
                   key={entryType.id}

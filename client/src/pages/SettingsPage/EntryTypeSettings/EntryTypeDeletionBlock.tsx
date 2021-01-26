@@ -2,7 +2,7 @@ import Button from "components/atoms/Button";
 import fetchApi from "fetchApi";
 import { ReactNode, Suspense, useCallback } from "react";
 import { useQuery } from "react-query";
-import { EntryTypeType } from "types";
+import { EntryType } from "types";
 import useDestroyEntryType from "./useDestroyEntryType";
 
 function BlockContainer({ children }: { children: ReactNode }) {
@@ -13,7 +13,7 @@ function BlockContainer({ children }: { children: ReactNode }) {
   );
 }
 
-function EntryTypeDeletionBlock({ entryType }: { entryType: EntryTypeType }) {
+function EntryTypeDeletionBlock({ entryType }: { entryType: EntryType }) {
   const fetchCanBeDeleted = useCallback(async () => {
     const response = await fetchApi(
       `/entry_types/${entryType.id}/can_be_deleted`
@@ -52,11 +52,7 @@ function EntryTypeDeletionBlock({ entryType }: { entryType: EntryTypeType }) {
   );
 }
 
-function EntryTypeDeletionBlockLoader({
-  entryType,
-}: {
-  entryType: EntryTypeType;
-}) {
+function EntryTypeDeletionBlockLoader({ entryType }: { entryType: EntryType }) {
   return (
     <Suspense
       fallback={
@@ -69,19 +65,5 @@ function EntryTypeDeletionBlockLoader({
     </Suspense>
   );
 }
-
-// {/* {entryType.canBeDeleted ? (
-//         <div className="bg-gray-400 p-4 text-white flex items-center">
-//           <p>This type can be safely removed.</p>
-// <div className="ml-auto">
-//   <Button
-//     variant="empty"
-//     className="bg-red-400 hover:bg-red-600 px-4 py-1"
-//   >
-//     Delete
-//   </Button>
-// </div>
-//         </div>
-//       ) : null} */}
 
 export default EntryTypeDeletionBlockLoader;

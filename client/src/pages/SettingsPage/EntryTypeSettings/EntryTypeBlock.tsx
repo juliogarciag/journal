@@ -13,7 +13,7 @@ import Button from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import EntryTypeIcon from "components/EntryTypeIcon";
 import { CSSProperties, useCallback, useState } from "react";
-import { EntryTypeType } from "types";
+import { EntryType } from "types";
 import EntryTypeDeletionBlock from "./EntryTypeDeletionBlock";
 import EntryTypeForm from "./EntryTypeForm";
 import useUpdateEntryType from "./useUpdateEntryType";
@@ -32,7 +32,7 @@ const dataTypeIcons: { [key: string]: IconProp } = {
 
 type EditEntryFormProps = {
   exitEditMode: () => void;
-  entryType: EntryTypeType;
+  entryType: EntryType;
 };
 function EditEntryForm({ exitEditMode, entryType }: EditEntryFormProps) {
   const updateEntryTypeMutation = useUpdateEntryType();
@@ -65,7 +65,7 @@ function EntryTypeBlock({
   entryType,
   isBeingDragged,
 }: {
-  entryType: EntryTypeType;
+  entryType: EntryType;
   isBeingDragged: boolean;
 }) {
   const {

@@ -1,0 +1,6 @@
+{
+  "watch": ["server.ts", "queries/**/*", "mutations/**/*"],
+  "ext": "ts",
+  "ignore": ["**/*.test.ts"],
+  "exec": "npx ts-node -r tsconfig-paths/register ./server.ts"
+}

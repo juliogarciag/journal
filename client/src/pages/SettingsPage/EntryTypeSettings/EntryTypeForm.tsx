@@ -5,7 +5,7 @@ import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import EntryTypeIcon from "components/EntryTypeIcon";
 import { Fragment, useCallback, useState } from "react";
-import { EntryTypeType, EntryTypeIconType } from "types";
+import { EntryType, EntryTypeIconType } from "types";
 
 type IconSelectProps = {
   value: EntryTypeIconType;
@@ -37,9 +37,9 @@ function IconSelect({ value, onChange, className = "" }: IconSelectProps) {
 }
 
 type EntryTypeFormProps = {
-  entryType?: EntryTypeType;
+  entryType?: EntryType;
   onCancel: () => void;
-  save: (attributes: Partial<EntryTypeType>) => Promise<unknown>;
+  save: (attributes: Partial<EntryType>) => Promise<unknown>;
 };
 function EntryTypeForm({ onCancel, entryType, save }: EntryTypeFormProps) {
   const [name, setName] = useState(entryType?.name || "");
