@@ -103,7 +103,7 @@ function Sidebar() {
       <Spacer className="h-4" />
       <div className="bg-gray-300 p-2 rounded-xl">
         <Suspense fallback={<span>Loading...</span>}>
-          {/* <YearMetrics year={2021} /> */}
+          <YearMetrics year={2021} />
         </Suspense>
       </div>
       <Spacer className="h-6" />

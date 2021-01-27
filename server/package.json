@@ -4,16 +4,22 @@
     "start": "nodemon"
   },
   "dependencies": {
+    "@prisma/cli": "^2.15.0",
+    "@prisma/client": "^2.15.0",
     "@types/cors": "^2.8.9",
     "@types/express": "^4.17.11",
+    "@types/lodash": "^4.14.168",
+    "@types/luxon": "^1.25.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
+    "lodash": "^4.17.20",
     "luxon": "^1.25.0",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
-    "tsconfig-paths": "^3.9.0"
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.3"
   }
 }

@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import getDailyEntries from "./queries/getDailyEntries";
 import updateEntry from "./mutations/updateEntry";
+import getMetrics from "./queries/getMetrics";
 import cors from "cors";
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(
 );
 
 app.get("/daily-entries/:day", getDailyEntries);
+app.get("/metrics", getMetrics);
 app.patch("/entries/:entryId", updateEntry);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
