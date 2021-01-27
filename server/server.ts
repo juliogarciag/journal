@@ -4,6 +4,8 @@ import express from "express";
 import getDailyEntries from "./queries/getDailyEntries";
 import updateEntry from "./mutations/updateEntry";
 import getMetrics from "./queries/getMetrics";
+import getEntryTypes from "./queries/getEntryTypes";
+import getIfEntryCanBeDeleted from "./queries/getIfEntryCanBeDeleted";
 import cors from "cors";
 
 dotenv.config();
@@ -27,5 +29,7 @@ app.use(
 app.get("/daily-entries/:day", getDailyEntries);
 app.get("/metrics", getMetrics);
 app.patch("/entries/:entryId", updateEntry);
+app.get("/entry-types", getEntryTypes);
+app.get("/entry-types/:entryTypeId/can-be-deleted", getIfEntryCanBeDeleted);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

@@ -16,7 +16,7 @@ function BlockContainer({ children }: { children: ReactNode }) {
 function EntryTypeDeletionBlock({ entryType }: { entryType: EntryType }) {
   const fetchCanBeDeleted = useCallback(async () => {
     const response = await fetchApi(
-      `/entry_types/${entryType.id}/can_be_deleted`
+      `/entry-types/${entryType.id}/can-be-deleted`
     );
     return response.json();
   }, [entryType]);

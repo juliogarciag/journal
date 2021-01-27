@@ -6,7 +6,7 @@ function useDestroyEntryType() {
 
   return useMutation(
     async (values: { id: number }) => {
-      const response = await fetchApi(`/entry_types/${values.id}`, {
+      const response = await fetchApi(`/entry-types/${values.id}`, {
         method: "DELETE",
         body: {
           entryType: values,

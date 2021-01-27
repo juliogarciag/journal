@@ -45,7 +45,7 @@ class EventForgivingMouseSensor extends MouseSensor {
 
 function EntryTypeSettings() {
   const fetchEntryTypes = useCallback(async () => {
-    const response = await fetchApi("/entry_types");
+    const response = await fetchApi("/entry-types");
     return response.json();
   }, []);
 

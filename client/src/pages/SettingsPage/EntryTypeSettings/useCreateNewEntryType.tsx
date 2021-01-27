@@ -6,7 +6,7 @@ function useCreateNewEntryType() {
 
   return useMutation(
     async (values: { name: string; dataType: string; icon: string }) => {
-      const response = await fetchApi(`/entry_types`, {
+      const response = await fetchApi(`/entry-types`, {
         method: "POST",
         body: {
           entryType: values,

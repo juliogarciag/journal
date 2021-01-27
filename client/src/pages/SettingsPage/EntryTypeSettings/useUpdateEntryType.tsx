@@ -13,7 +13,7 @@ function useUpdateEntryType({ bypassOptimisticUpdate = false } = {}) {
   return useMutation(
     async (values: { id: Number; attributes: Partial<EntryType> }) => {
       const { id, attributes } = values;
-      const response = await fetchApi(`/entry_types/${id}`, {
+      const response = await fetchApi(`/entry-types/${id}`, {
         method: "PATCH",
         body: { entryType: attributes },
       });
