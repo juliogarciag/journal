@@ -13,7 +13,7 @@ import Button from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import EntryTypeIcon from "components/EntryTypeIcon";
 import { CSSProperties, useCallback, useState } from "react";
-import { EntryType } from "types";
+import { EntryDataType, EntryType } from "types";
 import EntryTypeDeletionBlock from "./EntryTypeDeletionBlock";
 import EntryTypeForm from "./EntryTypeForm";
 import useUpdateEntryType from "./useUpdateEntryType";
@@ -24,10 +24,10 @@ const dataTypeCopies: { [key: string]: string } = {
   quantity: "Quantity",
 };
 
-const dataTypeIcons: { [key: string]: IconProp } = {
-  boolean: faToggleOn,
-  time: faClock,
-  quantity: faSortNumericUpAlt,
+const dataTypeIcons: { [key in EntryDataType]: IconProp } = {
+  [EntryDataType.BOOLEAN]: faToggleOn,
+  [EntryDataType.TIME]: faClock,
+  [EntryDataType.QUANTITY]: faSortNumericUpAlt,
 };
 
 type EditEntryFormProps = {

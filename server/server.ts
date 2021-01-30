@@ -2,10 +2,13 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import express from "express";
 import getDailyEntries from "./queries/getDailyEntries";
-import updateEntry from "./mutations/updateEntry";
 import getMetrics from "./queries/getMetrics";
 import getEntryTypes from "./queries/getEntryTypes";
 import getIfEntryCanBeDeleted from "./queries/getIfEntryCanBeDeleted";
+import updateEntry from "./mutations/updateEntry";
+import createEntryType from "./mutations/createEntryType";
+import updateEntryType from "./mutations/updateEntryType";
+import deleteEntryType from "./mutations/deleteEntryType";
 import cors from "cors";
 
 dotenv.config();
@@ -28,8 +31,12 @@ app.use(
 
 app.get("/daily-entries/:day", getDailyEntries);
 app.get("/metrics", getMetrics);
-app.patch("/entries/:entryId", updateEntry);
 app.get("/entry-types", getEntryTypes);
 app.get("/entry-types/:entryTypeId/can-be-deleted", getIfEntryCanBeDeleted);
+
+app.patch("/entries/:entryId", updateEntry);
+app.post("/entry-types", createEntryType);
+app.patch("/entry-types/:entryTypeId", updateEntryType);
+app.delete("/entry-types/:entryTypeId", deleteEntryType);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

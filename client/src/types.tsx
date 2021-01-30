@@ -1,5 +1,7 @@
 import {
   Entry as PrismaEntry,
+  EntryType as PrismaEntryType,
+  EntryDataType,
   MetricType,
 } from "../../server/node_modules/.prisma/client";
 
@@ -13,13 +15,10 @@ enum EntryTypeIconType {
   Unknown = "unknown",
 }
 
-export type EntryType = {
-  id: number;
-  name: string;
+export interface EntryType extends PrismaEntryType {
   icon: EntryTypeIconType;
-  dataType: string;
   rowOrderPosition: number;
-};
+}
 
 export type EntryValue = string | number | boolean | null;
 
@@ -41,4 +40,4 @@ export type Metric = {
   };
 };
 
-export { MetricType, EntryTypeIconType };
+export { MetricType, EntryTypeIconType, EntryDataType };

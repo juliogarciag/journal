@@ -5,7 +5,7 @@ import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
 import EntryTypeIcon from "components/EntryTypeIcon";
 import { Fragment, useCallback, useState } from "react";
-import { EntryType, EntryTypeIconType } from "types";
+import { EntryDataType, EntryType, EntryTypeIconType } from "types";
 
 type IconSelectProps = {
   value: EntryTypeIconType;
@@ -43,7 +43,9 @@ type EntryTypeFormProps = {
 };
 function EntryTypeForm({ onCancel, entryType, save }: EntryTypeFormProps) {
   const [name, setName] = useState(entryType?.name || "");
-  const [dataType, setDataType] = useState(entryType?.dataType || "boolean");
+  const [dataType, setDataType] = useState(
+    entryType?.dataType || EntryDataType.BOOLEAN
+  );
   const [icon, setIcon] = useState(
     entryType?.icon || EntryTypeIconType.Unknown
   );
@@ -81,12 +83,14 @@ function EntryTypeForm({ onCancel, entryType, save }: EntryTypeFormProps) {
           <div className="relative">
             <select
               defaultValue={dataType}
-              onChange={(event) => setDataType(event.currentTarget.value)}
+              onChange={(event) =>
+                setDataType(event.currentTarget.value as EntryDataType)
+              }
               className="appearance-none w-48 px-2 py-1 border border-gray-300"
             >
-              <option value="boolean">Yes / No</option>
-              <option value="time">Time</option>
-              <option value="quantity">Quantity</option>
+              <option value={EntryDataType.BOOLEAN}>Yes / No</option>
+              <option value={EntryDataType.TIME}>Time</option>
+              <option value={EntryDataType.QUANTITY}>Quantity</option>
             </select>
             <div className="absolute top-1 right-2 pointer-events-none">
               <FontAwesomeIcon icon={faCaretDown} />

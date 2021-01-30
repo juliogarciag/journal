@@ -1,21 +1,11 @@
 import expressAsyncHandler from "express-async-handler";
 import prisma from "lib/prismaClient";
+import canEntryTypeBeDeleted from "lib/canEntryTypeBeDeleted";
 
 export default expressAsyncHandler(async (request, response) => {
-  const undeletableEntriesCount = await prisma.entry.count({
-    where: {
-      AND: {
-        entryTypeId: Number(request.params.entryTypeId),
-        OR: [
-          { NOT: { booleanValue: null } },
-          { NOT: { quantityValue: null } },
-          { NOT: { timeValue: null } },
-        ],
-      },
-    },
+  response.json({
+    canBeDeleted: await canEntryTypeBeDeleted(
+      Number(request.params.entryTypeId)
+    ),
   });
-
-  const canBeDeleted = undeletableEntriesCount === 0;
-
-  response.json({ canBeDeleted });
 });

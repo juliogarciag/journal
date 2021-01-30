@@ -26,7 +26,7 @@ const allowedIcons: Record<EntryTypeIconType, IconDefinition> = {
 };
 
 type EntryTypeIconProps = {
-  icon: EntryTypeIconType;
+  icon?: EntryTypeIconType;
   size?: FontAwesomeIconProps["size"];
   className?: string;
 };
@@ -35,9 +35,15 @@ function EntryTypeIcon({
   size = "1x",
   className = "",
 }: EntryTypeIconProps) {
+  let faIcon = faQuestionCircle;
+
+  if (icon && allowedIcons[icon]) {
+    faIcon = allowedIcons[icon];
+  }
+
   return (
     <FontAwesomeIcon
-      icon={allowedIcons[icon] || faQuestionCircle}
+      icon={faIcon}
       size={size}
       className={clsx("fill-current", className)}
     />
