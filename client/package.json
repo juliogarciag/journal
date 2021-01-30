@@ -2,6 +2,7 @@
   "name": "journal-client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3000",
   "dependencies": {
     "@babel/helper-define-map": "^7.10.5",
     "@craco/craco": "^6.0.0",

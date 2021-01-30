@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const CLIENT_DOMAIN =
-  process.env.NODE_ENV !== "production" ? "http://localhost:8080" : "TODO";
+  process.env.NODE_ENV !== "production" ? "http://localhost:5000" : "TODO";
 
 app.use(
   cors({

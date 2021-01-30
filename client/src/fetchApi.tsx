@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const BASE_URL = window.location.origin;
 
 interface ExtendedRequestInit extends Omit<RequestInit, "body"> {
   body?: object | RequestInit["body"];
