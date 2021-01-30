@@ -16,7 +16,7 @@ model EntryType {
   updatedAt       DateTime         @updatedAt
   dataType        EntryDataType
   name            String
-  rowOrder        Int              @unique
+  rowOrder        Int?
   icon            String
   entries         Entry[]
   metricTemplates MetricTemplate[]
