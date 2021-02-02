@@ -47,4 +47,10 @@ app.post("/metric-templates", createMetricTemplate);
 app.patch("/metric-templates/:metricTemplateId", updateMetricTemplate);
 app.delete("/metric-templates/:metricTemplateId", deleteMetricTemplate);
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+const server = app.listen(port, () => console.log(`Listening on port ${port}`));
+
+["exit", "SIGINT", "uncaughtException", "SIGTERM"].forEach((eventType) => {
+  process.on(eventType, () => {
+    server.close();
+  });
+});

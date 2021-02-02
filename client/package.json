@@ -29,7 +29,6 @@
     "history": "^5.0.0",
     "immer": "^8.0.0",
     "luxon": "^1.25.0",
-    "nodemon": "^2.0.7",
     "postcss": "^7",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
