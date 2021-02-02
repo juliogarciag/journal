@@ -16,9 +16,9 @@ import {
 } from "@dnd-kit/sortable";
 import Button, { VariantType } from "components/atoms/Button";
 import Spacer from "components/atoms/Spacer";
-import fetchApi from "fetchApi";
+import useEntryTypes from "lib/useEntryTypes";
 import { MouseEvent, useCallback, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { EntryType } from "types";
 import EntryTypeBlock from "./EntryTypeBlock";
 import NewEntryTypeForm from "./NewEntryTypeForm";
@@ -44,13 +44,7 @@ class EventForgivingMouseSensor extends MouseSensor {
 }
 
 function EntryTypeSettings() {
-  const fetchEntryTypes = useCallback(async () => {
-    const response = await fetchApi("/entry-types");
-    return response.json();
-  }, []);
-
-  const { data } = useQuery("entryTypes", fetchEntryTypes);
-  const entryTypes: Array<EntryType> = data.entryTypes;
+  const entryTypes = useEntryTypes();
   const entryTypesIds = entryTypes.map((entryType) => entryType.id.toString());
 
   const sensors = useSensors(
@@ -148,7 +142,7 @@ function EntryTypeSettings() {
             className="ml-auto px-2"
             onClick={displayCreationForm}
           >
-            Create new type
+            New Entry type
           </Button>
         )}
       </div>
@@ -159,29 +153,28 @@ function EntryTypeSettings() {
         </>
       ) : null}
       <Spacer className="h-12" />
-      <div>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={entryTypesIds}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={entryTypesIds}
-            strategy={verticalListSortingStrategy}
-          >
-            {entryTypes.map((entryType: EntryType) => {
-              return (
-                <EntryTypeBlock
-                  key={entryType.id}
-                  entryType={entryType}
-                  isBeingDragged={entryType.id === draggingEntryTypeId}
-                />
-              );
-            })}
-          </SortableContext>
-        </DndContext>
-      </div>
+          {entryTypes.map((entryType: EntryType) => {
+            return (
+              <EntryTypeBlock
+                key={entryType.id}
+                entryType={entryType}
+                isBeingDragged={entryType.id === draggingEntryTypeId}
+              />
+            );
+          })}
+        </SortableContext>
+      </DndContext>
     </>
   );
 }

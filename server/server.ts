@@ -10,6 +10,10 @@ import createEntryType from "./mutations/createEntryType";
 import updateEntryType from "./mutations/updateEntryType";
 import deleteEntryType from "./mutations/deleteEntryType";
 import cors from "cors";
+import getMetricTemplates from "queries/getMetricTemplates";
+import createMetricTemplate from "mutations/createMetricType";
+import updateMetricTemplate from "mutations/updateMetricTemplate";
+import deleteMetricTemplate from "mutations/deleteMetricTemplate";
 
 dotenv.config();
 
@@ -33,10 +37,14 @@ app.get("/daily-entries/:day", getDailyEntries);
 app.get("/metrics", getMetrics);
 app.get("/entry-types", getEntryTypes);
 app.get("/entry-types/:entryTypeId/can-be-deleted", getIfEntryCanBeDeleted);
+app.get("/metric-templates", getMetricTemplates);
 
 app.patch("/entries/:entryId", updateEntry);
 app.post("/entry-types", createEntryType);
 app.patch("/entry-types/:entryTypeId", updateEntryType);
 app.delete("/entry-types/:entryTypeId", deleteEntryType);
+app.post("/metric-templates", createMetricTemplate);
+app.patch("/metric-templates/:metricTemplateId", updateMetricTemplate);
+app.delete("/metric-templates/:metricTemplateId", deleteMetricTemplate);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

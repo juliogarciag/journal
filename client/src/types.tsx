@@ -1,6 +1,7 @@
 import {
   Entry as PrismaEntry,
   EntryType as PrismaEntryType,
+  MetricTemplate as PrismaMetricTemplate,
   EntryDataType,
   MetricType,
 } from "../../server/node_modules/.prisma/client";
@@ -24,6 +25,10 @@ export type EntryValue = string | number | boolean | null;
 
 export interface Entry extends PrismaEntry {
   value: EntryValue;
+  entryType: EntryType;
+}
+
+export interface MetricTemplate extends PrismaMetricTemplate {
   entryType: EntryType;
 }
 

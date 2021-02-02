@@ -7,7 +7,21 @@ export default expressAsyncHandler(async (request, response) => {
   const canBeDeleted = await canEntryTypeBeDeleted(entryTypeId);
 
   if (canBeDeleted) {
-    await prisma.entryType.delete({ where: { id: entryTypeId } });
+    const deleteEntries = prisma.entry.deleteMany({
+      where: { entryTypeId: entryTypeId },
+    });
+    const deleteMetricTemplates = prisma.metricTemplate.deleteMany({
+      where: { entryTypeId: entryTypeId },
+    });
+    const deleteEntryType = prisma.entryType.delete({
+      where: { id: entryTypeId },
+    });
+
+    await prisma.$transaction([
+      deleteEntries,
+      deleteMetricTemplates,
+      deleteEntryType,
+    ]);
   }
 
   response.status(204).json({ ok: canBeDeleted });

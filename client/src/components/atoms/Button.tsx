@@ -75,7 +75,7 @@ function Button({
       className={clsx(
         VARIANT_CLASSES[variant] || "",
         {
-          "text-gray-400 cursor-not-allowed": disabled,
+          "opacity-40 cursor-not-allowed": disabled,
           "focus:outline-none": mouseDown,
         },
         className
